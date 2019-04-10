@@ -1,4 +1,7 @@
-# Package template
+<div align="center">
+
+# Configuru
+
 [![Build Status](https://img.shields.io/travis/com/AckeeCZ/configuru/master.svg?style=flat-square)](https://travis-ci.com/AckeeCZ/configuru)
 [![Coverage](https://img.shields.io/codeclimate/coverage/AckeeCZ/configuru.svg?style=flat-square)](https://codeclimate.com/github/AckeeCZ/configuru)
 [![Maintainability](https://img.shields.io/codeclimate/maintainability/AckeeCZ/configuru.svg?style=flat-square)](https://codeclimate.com/github/AckeeCZ/configuru)
@@ -6,28 +9,11 @@
 [![Dependency Status](https://img.shields.io/david/AckeeCZ/configuru.svg?style=flat-square)](https://david-dm.org/AckeeCZ/configuru)
 [![Dev Dependency Status](https://img.shields.io/david/dev/AckeeCZ/configuru.svg?style=flat-square)](https://david-dm.org/AckeeCZ/configuru?type=dev)
 
-## Setup
 
-### Travis
-- Update `.travis.yml`
-- Log in to [Travis](https://travis-ci.com)
-- Add the project (wait for permission)
-- Update `script`, `deploy`
+TODO description
 
-### Codeclimate
-- Log in to [CodeClimate](https://codeclimate.com/oss/dashboard)
-- Add the project
-- Setup travis `CC_TEST_REPORTER_ID` env
-- Setup coverage in `.travis.yml`
+</div>
 
-
-### Snyk
-- Log in to [Snyk](https://app.snyk.io)
-- Add project
-- Update badge source and link
-
-### David
-- No need to integrate, just update links
 
 ## License
 
