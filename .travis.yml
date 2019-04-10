@@ -1,0 +1,33 @@
+language: node_js
+node_js:
+- '6'
+- '7'
+- '8'
+- '9'
+- '10'
+
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+
+script:
+- npm run lint
+- npm run build
+- npm run test:coverage
+- npm run docs
+
+after_script:
+  - echo $TRAVIS_TEST_RESULT
+  - ./cc-test-reporter after-build --debug --exit-code $TRAVIS_TEST_RESULT
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token:
+    secure: ATZGE60SZ3BcAJCUywrS+5TDN4CBCtgx1zKDek2SQac7KmwLXGNgrOOXPUEnuhYn8SZWvxKup5YVm1ehJrhiuIjwc9VRXSNNpaSHE16pKBSDCFMDXZrHi4oQQzP6iKklPmwqM9QTKxTx9FQvAq5AG7fvcI+FTTGwdaMHs4V3OL4uhUKrl9U60F9JwvYi7wysQ/2qm2XNk/IG/us/FAaBPZXbTrQtk+xA4adxtOznPrlMbmWIrKIP5dCDnQQFKucSbN1Qi9lbaPEFhLniX6qSacYtNAjjmxQ26TrzeX/DiHORBpocDcNFlMETCfTK5XkPZjbyO3C/stTjnesEFiJg7lZxVnYimOTQJcDfQEZhrcP5gQ8aQQCgQX8xo9bWD5tHZ7nYURaS1WZ84rbIz9KOqvu/81as5ikPSsvGiewk8MyYnc6XQ0te2dyKqH2ksp+mOTkxKXp1E9IXHylyZr1aGbS99rJPRweRSwjLkdd8cjna5efZkqkKgUyKvzp8xzKfocdb297euW47ls3umrYD50dWrldUd6vU0YkrQtbbPXVs7w1MIB9gH1vxhkJukObGocve5nia9E4Zk/dVe5COKW0V2xZ2O8Gg7stFt73u93mySsn6Z5PwM7lozbxF4+1gR4jZLRARw2CfPUHE6vuBhGr1Ivn1mWDDD2k8abBBUXE=
+  keep-history: true
+  local-dir: ./docs
+  verbose: true
+  on:
+    branch: master

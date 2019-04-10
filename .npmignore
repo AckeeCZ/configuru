@@ -1,0 +1,9 @@
+node_modules
+package-lock.json
+coverage
+docs
+jest.config.js
+tsconfig.json
+tslint.json
+cc-test-reporter
+CHANGELOG.md
