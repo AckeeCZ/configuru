@@ -1,1 +1,1 @@
-export { createLoaders, loader } from './lib/loader';
+export { createLoaders } from './lib/loader';

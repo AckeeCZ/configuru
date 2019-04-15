@@ -4,8 +4,6 @@ import { createConfigStorage } from './storage';
 const parseBool = (x: any) => (x === 'false' || x === '0' ? false : Boolean(x));
 const identity = <T>(x: T) => x;
 
-export const loader = () => ({});
-
 export interface ConfigLoaderOptions {
     defaultConfigPath?: string;
     userConfigPath?: string;
