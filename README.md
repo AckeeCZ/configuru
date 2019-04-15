@@ -1,6 +1,6 @@
 <div align="center">
 
-# Configuru
+# :wrench: Configuru
 
 [![Build Status](https://img.shields.io/travis/com/AckeeCZ/configuru/master.svg?style=flat-square)](https://travis-ci.com/AckeeCZ/configuru)
 [![Coverage](https://img.shields.io/codeclimate/coverage/AckeeCZ/configuru.svg?style=flat-square)](https://codeclimate.com/github/AckeeCZ/configuru)
@@ -10,7 +10,7 @@
 [![Dev Dependency Status](https://img.shields.io/david/dev/AckeeCZ/configuru.svg?style=flat-square)](https://david-dm.org/AckeeCZ/configuru?type=dev)
 
 
-TODO description
+Manage the configuration of your Nodejs application with multiple environments and custom preferences, utilizing Configuru in CI and development as well!
 
 </div>
 

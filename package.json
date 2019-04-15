@@ -1,6 +1,6 @@
 {
   "name": "configuru",
-  "description": "configuru",
+  "description": "Manage the configuration of your Nodejs application with multiple environments and custom preferences, utilizing Configuru in CI and development as well!",
   "version": "0.0.1",
   "author": "Jaroslav Šmolík <grissius@gmail.com>",
   "contributors": [
@@ -16,7 +16,21 @@
   },
   "license": "MIT",
   "keywords": [
-
+    "configuration",
+    "env",
+    "variable",
+    "preferences",
+    "environment",
+    "dot-env",
+    "process-env",
+    "config",
+    "setup",
+    "loader",
+    "builder",
+    "backend",
+    "nodejs",
+    "node",
+    "parser"
   ],
   "scripts": {
     "build": "tsc",
