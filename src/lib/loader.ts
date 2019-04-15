@@ -1,8 +1,5 @@
 import { createConfigStorage } from './storage';
-
-// helpers
-const parseBool = (x: any) => (x === 'false' || x === '0' ? false : Boolean(x));
-const identity = <T>(x: T) => x;
+import { anonymize, identity, parseBool } from './helpers';
 
 export interface ConfigLoaderOptions {
     defaultConfigPath?: string;
@@ -16,19 +13,18 @@ const defaultOpts = {
     envMode: true,
 };
 
-export const createLoaders = (opts: ConfigLoaderOptions = defaultOpts) => {
-    const configStorage = createConfigStorage(opts);
+export const createAtomLoaderFactory = (storage: Record<any, any>, anonymize: (x: any) => any = identity) => {
     const load = <T, N extends boolean, R = N extends false ? T : T | null>(
         transform: (x: any) => T,
         anonymize: (x: any) => any,
         hidden: boolean,
         nullable: boolean
     ) => (key: string): R => {
-        const value = configStorage[key];
-        if (nullable && value === null) {
-            return value;
-        }
-        if (value === undefined) {
+        const value = storage[key];
+        if (value === undefined || value === null) {
+            if (nullable) {
+                return value;
+            }
             throw new Error(`Missing required value ${key}`);
         }
         if (hidden) {
@@ -36,7 +32,7 @@ export const createLoaders = (opts: ConfigLoaderOptions = defaultOpts) => {
         }
         return (transform(value) as any) as R;
     };
-    const atomLoader = <T>(transform: (x: any) => T, anonymize: (x: any) => any = identity) =>
+    return <T>(transform: (x: any) => T) =>
         Object.assign(load<T, false>(transform, anonymize, false, false), {
             hidden: Object.assign(load<T, false>(transform, anonymize, true, false), {
                 nullable: load<T, true>(transform, anonymize, true, true),
@@ -45,11 +41,12 @@ export const createLoaders = (opts: ConfigLoaderOptions = defaultOpts) => {
                 hidden: load<T, true>(transform, anonymize, true, true),
             }),
         });
-    const anonymize = (val: any) => {
-        const str = String(val);
-        const show = str.length / 6;
-        return [str.slice(0, show), '***', str.slice(str.length + 1 - show, str.length)].join('');
-    };
+};
+
+export const createLoaders = (opts: ConfigLoaderOptions = defaultOpts) => {
+    const configStorage = createConfigStorage(opts);
+    const atomLoader = createAtomLoaderFactory(configStorage);
+    const anonymousAtomLoader = createAtomLoaderFactory(configStorage, anonymize);
     return {
         configLoader: {
             number: atomLoader(Number),
@@ -58,10 +55,10 @@ export const createLoaders = (opts: ConfigLoaderOptions = defaultOpts) => {
             json: atomLoader(JSON.parse),
         },
         anonymizedConfigLoader: {
-            number: atomLoader(Number, anonymize),
-            string: atomLoader(String, anonymize),
-            bool: atomLoader(parseBool, anonymize),
-            json: atomLoader(JSON.parse, anonymize),
+            number: anonymousAtomLoader(Number),
+            string: anonymousAtomLoader(String),
+            bool: anonymousAtomLoader(parseBool),
+            json: anonymousAtomLoader(JSON.parse),
         },
     };
 };
