@@ -1,1 +1,1 @@
-export { configLoader, anonymizedConfigLoader, loader } from './lib/loader';
+export { createLoaders, loader } from './lib/loader';

@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`storage Default & user & env 1`] = `
+Object {
+  "bar": "3",
+  "baz": undefined,
+  "defaultConfig": undefined,
+  "foo": "env",
+  "quix": false,
+  "userConfig": true,
+}
+`;
+
+exports[`storage Default & user 1`] = `
+Object {
+  "bar": 1,
+  "baz": 2,
+  "defaultConfig": true,
+  "foo": "user",
+  "quix": false,
+  "userConfig": true,
+}
+`;
+
+exports[`storage Default 1`] = `
+Object {
+  "bar": 1,
+  "baz": 2,
+  "defaultConfig": true,
+  "foo": "default",
+}
+`;

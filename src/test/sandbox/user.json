@@ -1,0 +1,6 @@
+{
+    "foo": "user",
+    "bar": 1,
+    "quix": false,
+    "userConfig": true
+}

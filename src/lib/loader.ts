@@ -1,19 +1,25 @@
-import { readFileSync } from 'fs';
+import { createConfigStorage } from './storage';
 
 // helpers
 const parseBool = (x: any) => (x === 'false' || x === '0' ? false : Boolean(x));
-const fromPairs = (pairs: Array<[keyof any, any]>) => Object.assign({}, ...Array.from(pairs, ([k, v]) => ({ [k]: v })));
-const { keys } = Object;
 const identity = <T>(x: T) => x;
 
 export const loader = () => ({});
 
-export const { configLoader, anonymizedConfigLoader } = (() => {
-    const defaultConfig = {}; // JSON.parse(readFileSync('.env.json', 'utf-8'));
-    const CONFIG_PATH = process.env.CFG_JSON_PATH;
-    const userConfig = CONFIG_PATH ? JSON.parse(readFileSync(CONFIG_PATH, 'utf-8')) : {};
-    const envConfig = fromPairs(keys(defaultConfig).map(k => [k, process.env[k]]));
-    const configStorage = { ...defaultConfig, ...userConfig, ...envConfig };
+export interface ConfigLoaderOptions {
+    defaultConfigPath?: string;
+    userConfigPath?: string;
+    envMode?: boolean;
+}
+
+const defaultOpts = {
+    defaultConfigPath: '.env.json',
+    userConfigPath: process.env.CFG_JSON_PATH,
+    envMode: true,
+};
+
+export const createLoaders = (opts: ConfigLoaderOptions = defaultOpts) => {
+    const configStorage = createConfigStorage(opts);
     const load = <T, N extends boolean, R = N extends false ? T : T | null>(
         transform: (x: any) => T,
         anonymize: (x: any) => any,
@@ -60,6 +66,6 @@ export const { configLoader, anonymizedConfigLoader } = (() => {
             json: atomLoader(JSON.parse, anonymize),
         },
     };
-})();
+};
 
-export type ConfigLoader = typeof configLoader;
+export type ConfigLoader = ReturnType<typeof createLoaders>['configLoader'];
