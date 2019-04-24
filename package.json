@@ -6,7 +6,7 @@
   "contributors": [
     "Jaroslav Šmolík <grissius@gmail.com>"
   ],
-  "main": "./dist/main.js",
+  "main": "./dist/index.js",
   "engines": {
     "node": "^10.14.0"
   },
