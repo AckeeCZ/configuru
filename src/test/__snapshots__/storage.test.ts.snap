@@ -3,8 +3,8 @@
 exports[`storage Default & user & env 1`] = `
 Object {
   "bar": "3",
-  "baz": undefined,
-  "defaultConfig": undefined,
+  "baz": 2,
+  "defaultConfig": true,
   "foo": "env",
   "quix": false,
   "userConfig": true,

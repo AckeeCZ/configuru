@@ -11,7 +11,9 @@ export const createConfigStorage = (
     let envConfig: any = {};
     if (opts.envMode === 'default' || opts.envMode === 'merged') {
         const configKeys = [...keys(defaultConfig), ...(opts.envMode === 'merged' ? keys(userConfig) : [])];
-        envConfig = fromPairs(configKeys.map(k => [k, process.env[k]] as [string, any])) as any;
+        envConfig = fromPairs(
+            configKeys.map(k => [k, process.env[k]] as [string, any]).filter(x => x[1] !== undefined)
+        );
     } else if (opts.envMode === 'all') {
         envConfig = process.env;
     }
