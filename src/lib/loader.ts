@@ -1,10 +1,10 @@
-import { createConfigStorage } from './storage';
 import { anonymize, identity, parseBool } from './helpers';
+import { createConfigStorage } from './storage';
 
 export interface ConfigLoaderOptions {
     defaultConfigPath?: string;
     userConfigPath?: string;
-    envMode?: 'all'|'default'|'merged'|'none';
+    envMode?: 'all' | 'default' | 'merged' | 'none';
 }
 
 const defaultOpts: ConfigLoaderOptions = {
