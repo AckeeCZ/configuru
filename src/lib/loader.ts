@@ -4,13 +4,13 @@ import { anonymize, identity, parseBool } from './helpers';
 export interface ConfigLoaderOptions {
     defaultConfigPath?: string;
     userConfigPath?: string;
-    envMode?: boolean;
+    envMode?: 'all'|'default'|'merged'|'none';
 }
 
-const defaultOpts = {
+const defaultOpts: ConfigLoaderOptions = {
     defaultConfigPath: '.env.json',
     userConfigPath: process.env.CFG_JSON_PATH,
-    envMode: true,
+    envMode: 'default',
 };
 
 export const createAtomLoaderFactory = (storage: Record<any, any>, anonymize: (x: any) => any = identity) => {
