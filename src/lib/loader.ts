@@ -1,4 +1,4 @@
-import { anonymize, identity, parseBool } from './helpers';
+import { parseBool } from './helpers';
 import { createConfigStorage } from './storage';
 
 export interface ConfigLoaderOptions {
@@ -13,10 +13,9 @@ const defaultOpts: ConfigLoaderOptions = {
     envMode: 'default',
 };
 
-export const createAtomLoaderFactory = (storage: Record<any, any>, anonymize: (x: any) => any = identity) => {
+export const createAtomLoaderFactory = (storage: Record<any, any>) => {
     const load = <T, N extends boolean, R = N extends false ? T : T | null>(
         transform: (x: any) => T,
-        anonymize: (x: any) => any,
         hidden: boolean,
         nullable: boolean
     ) => (key: string): R => {
@@ -28,17 +27,18 @@ export const createAtomLoaderFactory = (storage: Record<any, any>, anonymize: (x
             throw new Error(`Missing required value ${key}`);
         }
         if (hidden) {
-            return anonymize(value);
+            // TODO
+            return value;
         }
         return (transform(value) as any) as R;
     };
     return <T>(transform: (x: any) => T) =>
-        Object.assign(load<T, false>(transform, anonymize, false, false), {
-            hidden: Object.assign(load<T, false>(transform, anonymize, true, false), {
-                nullable: load<T, true>(transform, anonymize, true, true),
+        Object.assign(load<T, false>(transform, false, false), {
+            hidden: Object.assign(load<T, false>(transform, true, false), {
+                nullable: load<T, true>(transform, true, true),
             }),
-            nullable: Object.assign(load<T, true>(transform, anonymize, false, true), {
-                hidden: load<T, true>(transform, anonymize, true, true),
+            nullable: Object.assign(load<T, true>(transform, false, true), {
+                hidden: load<T, true>(transform, true, true),
             }),
         });
 };
@@ -46,21 +46,12 @@ export const createAtomLoaderFactory = (storage: Record<any, any>, anonymize: (x
 export const createLoaders = (opts: ConfigLoaderOptions = defaultOpts) => {
     const configStorage = createConfigStorage(opts);
     const atomLoader = createAtomLoaderFactory(configStorage);
-    const anonymousAtomLoader = createAtomLoaderFactory(configStorage, anonymize);
     return {
-        configLoader: {
-            number: atomLoader(Number),
-            string: atomLoader(String),
-            bool: atomLoader(parseBool),
-            json: atomLoader(JSON.parse),
-        },
-        anonymizedConfigLoader: {
-            number: anonymousAtomLoader(Number),
-            string: anonymousAtomLoader(String),
-            bool: anonymousAtomLoader(parseBool),
-            json: anonymousAtomLoader(JSON.parse),
-        },
+        number: atomLoader(Number),
+        string: atomLoader(String),
+        bool: atomLoader(parseBool),
+        json: atomLoader(JSON.parse),
     };
 };
 
-export type ConfigLoader = ReturnType<typeof createLoaders>['configLoader'];
+export type ConfigLoader = ReturnType<typeof createLoaders>;
