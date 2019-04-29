@@ -6,11 +6,14 @@ const typeTest = inspectWithPreamble(`
 import { createAtomLoaderFactory } from 'lib/loader';
 import { values, safeValues } from 'lib/polishers';
 
-const string = createAtomLoaderFactory({
+const storage = {
     FOO: 'foo',
     BAR: 'bar',
-    BAZ: 'baz',
-})(String);
+    BAZ: 123,
+    QUIX: 'abcdefghijklmnopqrstuvwxyz',
+};
+const string = createAtomLoaderFactory(storage)(String);
+const number = createAtomLoaderFactory(storage)(Number);
 
 const config1 = {
     my: {
@@ -20,19 +23,23 @@ const config1 = {
     },
     bar: string('BAR'),
     withConstant: {
-        baz: string('BAZ'),
+        baz: number.hidden('BAZ'),
         ans: 42,
+        quix: string.hidden('QUIX'),
     },
 };
 const config1Values = values(config1);
-const config1SafeValues = values(config1);
+const config1SafeValues = safeValues(config1);
 `);
 
-const string = createAtomLoaderFactory({
+const storage = {
     FOO: 'foo',
     BAR: 'bar',
-    BAZ: 'baz',
-})(String);
+    BAZ: 123,
+    QUIX: 'abcdefghijklmnopqrstuvwxyz',
+};
+const string = createAtomLoaderFactory(storage)(String);
+const number = createAtomLoaderFactory(storage)(Number);
 
 const config1 = {
     my: {
@@ -42,8 +49,9 @@ const config1 = {
     },
     bar: string('BAR'),
     withConstant: {
-        baz: string('BAZ'),
+        baz: number.hidden('BAZ'),
         ans: 42,
+        quix: string.hidden('QUIX'),
     },
 };
 
@@ -54,7 +62,7 @@ describe('polishers', () => {
         });
         test('types', () => {
             expect(typeTest('typeof config1Values')).toMatchInlineSnapshot(
-                '"{ my: { deep: { poem: string; }; }; bar: string; withConstant: { baz: string; ans: number; }; }"'
+                '"{ my: { deep: { poem: string; }; }; bar: string; withConstant: { baz: number; ans: number; quix: string; }; }"'
             );
         });
     });
@@ -64,7 +72,7 @@ describe('polishers', () => {
         });
         test('types', () => {
             expect(typeTest('typeof config1SafeValues')).toMatchInlineSnapshot(
-                '"{ my: { deep: { poem: string; }; }; bar: string; withConstant: { baz: string; ans: number; }; }"'
+                '"{ my: { deep: { poem: string; }; }; bar: string; withConstant: { baz: string; ans: number; quix: string; }; }"'
             );
         });
     });

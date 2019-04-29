@@ -9,12 +9,12 @@ type Values<C> = C extends object
     : C;
 
 type AnonymousValues<C> = C extends object
-    ? { [K in keyof C]: C[K] extends LoadedValue<any, any> ? string : Values<C[K]> }
+    ? { [K in keyof C]: C[K] extends LoadedValue<any, any> ? string : AnonymousValues<C[K]> }
     : C;
 
 const isLoadedValue = (x: any) => Object.keys(x || {}).includes('__CONFIGURU_LEAF');
 
-const mapConfig = (fn: (v: any) => any) => <T extends Record<any, any>>(config: T) =>
+const mapConfig = (fn: (v: LoadedValue<any, any>) => any) => <T extends Record<any, any>>(config: T) =>
     Object.keys(config).reduce((res: any, key) => {
         const val = config[key];
         if (isLoadedValue(val)) {
@@ -28,6 +28,6 @@ const mapConfig = (fn: (v: any) => any) => <T extends Record<any, any>>(config: 
     }, {});
 
 export const values = mapConfig(x => x.value) as <T extends Record<any, any>>(config: T) => Values<T>;
-export const safeValues = mapConfig(x => anonymize(x.value)) as <T extends Record<any, any>>(
+export const safeValues = mapConfig(x => (x.hidden ? anonymize(x.rawValue) : x.value)) as <T extends Record<any, any>>(
     config: T
 ) => AnonymousValues<T>;
