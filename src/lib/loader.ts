@@ -13,24 +13,28 @@ const defaultOpts: ConfigLoaderOptions = {
     envMode: 'default',
 };
 
+export interface LoadedValue<T, N extends boolean, R = N extends false ? T : T | null> {
+    rawValue: any;
+    value: R;
+    hidden: boolean;
+    nullable: boolean;
+}
+
 export const createAtomLoaderFactory = (storage: Record<any, any>) => {
-    const load = <T, N extends boolean, R = N extends false ? T : T | null>(
-        transform: (x: any) => T,
-        hidden: boolean,
-        nullable: boolean
-    ) => (key: string): R => {
+    const load = <T, N extends boolean>(transform: (x: any) => T, hidden: boolean, nullable: boolean) => (
+        key: string
+    ): LoadedValue<T, N> => {
         const value = storage[key];
-        if (value === undefined || value === null) {
-            if (nullable) {
-                return value;
-            }
+        const missing = value === undefined || value === null;
+        if (!nullable && missing) {
             throw new Error(`Missing required value ${key}`);
         }
-        if (hidden) {
-            // TODO
-            return value;
-        }
-        return (transform(value) as any) as R;
+        return {
+            hidden,
+            nullable,
+            rawValue: value,
+            value: missing ? null : (transform(value) as any),
+        };
     };
     return <T>(transform: (x: any) => T) =>
         Object.assign(load<T, false>(transform, false, false), {
