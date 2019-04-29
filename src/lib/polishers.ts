@@ -1,4 +1,5 @@
 import { isObject } from 'util';
+import { anonymize } from './helpers';
 import { LoadedValue } from './loader';
 
 type LoadedToValue<X> = X extends LoadedValue<any, any> ? X['value'] : X;
@@ -7,17 +8,26 @@ type Values<C> = C extends object
     ? { [K in keyof C]: C[K] extends LoadedValue<any, any> ? LoadedToValue<C[K]> : Values<C[K]> }
     : C;
 
+type AnonymousValues<C> = C extends object
+    ? { [K in keyof C]: C[K] extends LoadedValue<any, any> ? string : Values<C[K]> }
+    : C;
+
 const isLoadedValue = (x: any) => Object.keys(x || {}).includes('__CONFIGURU_LEAF');
 
-export const values = <T extends Record<any, any>>(config: T) =>
+const mapConfig = (fn: (v: any) => any) => <T extends Record<any, any>>(config: T) =>
     Object.keys(config).reduce((res: any, key) => {
         const val = config[key];
         if (isLoadedValue(val)) {
-            res[key] = val.value;
+            res[key] = fn(val);
         } else if (isObject(val)) {
-            res[key] = values(val);
+            res[key] = mapConfig(fn)(val);
         } else {
             res[key] = val;
         }
         return res;
-    }, {}) as Values<T>;
+    }, {});
+
+export const values = mapConfig(x => x.value) as <T extends Record<any, any>>(config: T) => Values<T>;
+export const safeValues = mapConfig(x => anonymize(x.value)) as <T extends Record<any, any>>(
+    config: T
+) => AnonymousValues<T>;

@@ -1,5 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`polishers safeValues integration 1`] = `
+Object {
+  "bar": "***",
+  "my": Object {
+    "deep": Object {
+      "poem": "***",
+    },
+  },
+  "withConstant": Object {
+    "ans": 42,
+    "baz": "***",
+  },
+}
+`;
+
 exports[`polishers values integration 1`] = `
 Object {
   "bar": "bar",

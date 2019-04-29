@@ -1,10 +1,10 @@
 import { inspectWithPreamble } from 'intspector';
 import { createAtomLoaderFactory } from 'lib/loader';
-import { values } from 'lib/polishers';
+import { safeValues, values } from 'lib/polishers';
 
 const typeTest = inspectWithPreamble(`
 import { createAtomLoaderFactory } from 'lib/loader';
-import { values } from 'lib/polishers';
+import { values, safeValues } from 'lib/polishers';
 
 const string = createAtomLoaderFactory({
     FOO: 'foo',
@@ -12,7 +12,7 @@ const string = createAtomLoaderFactory({
     BAZ: 'baz',
 })(String);
 
-const config1 = values({
+const config1 = {
     my: {
         deep: {
             poem: string('FOO'),
@@ -23,7 +23,9 @@ const config1 = values({
         baz: string('BAZ'),
         ans: 42,
     },
-})
+};
+const config1Values = values(config1);
+const config1SafeValues = values(config1);
 `);
 
 const string = createAtomLoaderFactory({
@@ -32,26 +34,36 @@ const string = createAtomLoaderFactory({
     BAZ: 'baz',
 })(String);
 
+const config1 = {
+    my: {
+        deep: {
+            poem: string('FOO'),
+        },
+    },
+    bar: string('BAR'),
+    withConstant: {
+        baz: string('BAZ'),
+        ans: 42,
+    },
+};
+
 describe('polishers', () => {
     describe('values', () => {
         test('integration', () => {
-            expect(
-                values({
-                    my: {
-                        deep: {
-                            poem: string('FOO'),
-                        },
-                    },
-                    bar: string('BAR'),
-                    withConstant: {
-                        baz: string('BAZ'),
-                        ans: 42,
-                    },
-                })
-            ).toMatchSnapshot();
+            expect(values(config1)).toMatchSnapshot();
         });
         test('types', () => {
-            expect(typeTest('typeof config1')).toMatchInlineSnapshot(
+            expect(typeTest('typeof config1Values')).toMatchInlineSnapshot(
+                '"{ my: { deep: { poem: string; }; }; bar: string; withConstant: { baz: string; ans: number; }; }"'
+            );
+        });
+    });
+    describe('safeValues', () => {
+        test('integration', () => {
+            expect(safeValues(config1)).toMatchSnapshot();
+        });
+        test('types', () => {
+            expect(typeTest('typeof config1SafeValues')).toMatchInlineSnapshot(
                 '"{ my: { deep: { poem: string; }; }; bar: string; withConstant: { baz: string; ans: number; }; }"'
             );
         });
