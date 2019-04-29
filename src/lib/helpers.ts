@@ -6,3 +6,5 @@ export const anonymize = (val: any) => {
 
 export const parseBool = (x: any) => (x === 'false' || x === '0' ? false : Boolean(x));
 export const identity = <T>(x: T) => x;
+
+export const isObject = (x: any) => typeof x === 'object' && Object.prototype.toString.call(x) === '[object Object]';

@@ -18,6 +18,7 @@ export interface LoadedValue<T, N extends boolean, R = N extends false ? T : T |
     value: R;
     hidden: boolean;
     nullable: boolean;
+    __CONFIGURU_LEAF: true;
 }
 
 export const createAtomLoaderFactory = (storage: Record<any, any>) => {
@@ -34,6 +35,7 @@ export const createAtomLoaderFactory = (storage: Record<any, any>) => {
             nullable,
             rawValue: value,
             value: missing ? null : (transform(value) as any),
+            __CONFIGURU_LEAF: true,
         };
     };
     return <T>(transform: (x: any) => T) =>

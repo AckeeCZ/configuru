@@ -13,13 +13,14 @@ describe('atomLoader', () => {
     describe('string loader', () => {
         test('number', () => {
             expect(stringLoader('number')).toMatchInlineSnapshot(`
-                                Object {
-                                  "hidden": false,
-                                  "nullable": false,
-                                  "rawValue": 42,
-                                  "value": "42",
-                                }
-                        `);
+                Object {
+                  "__CONFIGURU_LEAF": true,
+                  "hidden": false,
+                  "nullable": false,
+                  "rawValue": 42,
+                  "value": "42",
+                }
+            `);
         });
         test('nullable', () => {
             // empty throws on default
@@ -27,21 +28,23 @@ describe('atomLoader', () => {
             expect(() => stringLoader('undefined')).toThrow(/missing/i);
             // empty valid on nullable
             expect(stringLoader.nullable('null')).toMatchInlineSnapshot(`
-                                Object {
-                                  "hidden": false,
-                                  "nullable": true,
-                                  "rawValue": null,
-                                  "value": null,
-                                }
-                        `);
+                Object {
+                  "__CONFIGURU_LEAF": true,
+                  "hidden": false,
+                  "nullable": true,
+                  "rawValue": null,
+                  "value": null,
+                }
+            `);
             expect(stringLoader.nullable('undefined')).toMatchInlineSnapshot(`
-                                Object {
-                                  "hidden": false,
-                                  "nullable": true,
-                                  "rawValue": undefined,
-                                  "value": null,
-                                }
-                        `);
+                Object {
+                  "__CONFIGURU_LEAF": true,
+                  "hidden": false,
+                  "nullable": true,
+                  "rawValue": undefined,
+                  "value": null,
+                }
+            `);
         });
         test('nullable & hidden', () => {
             // empty throws on hidden
@@ -49,25 +52,28 @@ describe('atomLoader', () => {
             expect(() => stringLoader.hidden('undefined')).toThrow(/missing/i);
             // empty valid on nullable
             expect(stringLoader.hidden.nullable('null')).toMatchInlineSnapshot(`
-                                Object {
-                                  "hidden": true,
-                                  "nullable": true,
-                                  "rawValue": null,
-                                  "value": null,
-                                }
-                        `);
+                Object {
+                  "__CONFIGURU_LEAF": true,
+                  "hidden": true,
+                  "nullable": true,
+                  "rawValue": null,
+                  "value": null,
+                }
+            `);
             expect(stringLoader.hidden.nullable('undefined')).toMatchInlineSnapshot(`
-                                Object {
-                                  "hidden": true,
-                                  "nullable": true,
-                                  "rawValue": undefined,
-                                  "value": null,
-                                }
-                        `);
+                Object {
+                  "__CONFIGURU_LEAF": true,
+                  "hidden": true,
+                  "nullable": true,
+                  "rawValue": undefined,
+                  "value": null,
+                }
+            `);
         });
         test('hidden', () => {
             expect(stringLoader.hidden('string')).toMatchInlineSnapshot(`
                 Object {
+                  "__CONFIGURU_LEAF": true,
                   "hidden": true,
                   "nullable": false,
                   "rawValue": "string",
