@@ -1,7 +1,7 @@
 {
   "name": "configuru",
   "description": "Manage the configuration of your Nodejs application with multiple environments and custom preferences, utilizing Configuru in CI and development as well!",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "author": "Jaroslav Šmolík <grissius@gmail.com>",
   "contributors": [
     "Jaroslav Šmolík <grissius@gmail.com>"
@@ -41,7 +41,8 @@
     "docs": "typedoc --options typedoc.json src/lib/*.ts",
     "check": "npm-check -i app -i errors -i config -i index & exit 0"
   },
-  "dependencies": {},
+  "dependencies": {
+  },
   "devDependencies": {
     "@types/jest": "^24.0.11",
     "husky": "^1.3.1",
