@@ -57,5 +57,6 @@ export const createLoader = (opts: ConfigLoaderOptions = defaultOpts) => {
         string: atomLoader(String),
         bool: atomLoader(parseBool),
         json: atomLoader(JSON.parse),
+        custom: <T>(fn: (x: any) => T) => atomLoader(fn),
     };
 };
