@@ -49,7 +49,7 @@ export const createAtomLoaderFactory = (storage: Record<any, any>) => {
         });
 };
 
-export const createLoaders = (opts: ConfigLoaderOptions = defaultOpts) => {
+export const createLoader = (opts: ConfigLoaderOptions = defaultOpts) => {
     const configStorage = createConfigStorage(opts);
     const atomLoader = createAtomLoaderFactory(configStorage);
     return {
@@ -59,5 +59,3 @@ export const createLoaders = (opts: ConfigLoaderOptions = defaultOpts) => {
         json: atomLoader(JSON.parse),
     };
 };
-
-export type ConfigLoader = ReturnType<typeof createLoaders>;
