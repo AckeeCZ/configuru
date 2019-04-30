@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Custom loaders
+
+### Changed
+- **[breaking]** Unified loaders and introduced `values` and `safeValues` polishers to trasnform the loaded schema
+- **[breaking]** Renamed `createLoaders` to `createLoader`
+- Simplified API (no need to implement schema in function)
+
+### Removed
+- Node 6 build in Travis (tests fail: [`intspector`](https://github.com/grissius/intspector) uses `Object.keys`, usage should be ok)
 
 ## [0.1.5] - 2019-04-24
 ### Added
