@@ -1,6 +1,0 @@
-diff a/src/lib/loader.ts b/src/lib/loader.ts	(rejected hunks)
-@@ -38,2 +36,2 @@ export const createAtomLoaderFactory = (storage: Record<any, any>) => {
--            value: missing ? null : transform(value) as any,
--        }
-+            value: missing ? null : (transform(value) as any),
-+        };
