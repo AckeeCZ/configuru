@@ -1,6 +1,9 @@
 <div align="center">
 
-# :wrench: Configuru
+<img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/google/146/female-mechanic_1f469-200d-1f527.png" width=70 />
+
+<h1>Configuru<img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/google/146/gear_2699.png" width=30 /></h1>
+
 
 [![Build Status](https://img.shields.io/travis/com/AckeeCZ/configuru/master.svg?style=flat-square)](https://travis-ci.com/AckeeCZ/configuru)
 [![Npm](https://img.shields.io/npm/v/configuru.svg?style=flat-square)](https://www.npmjs.com/package/configuru)
@@ -20,7 +23,7 @@ Manage the configuration of your Nodejs application with multiple environments a
 Configuru is a library for configuration management. Merge default project configuration with your user config, you can link yo your project. Atop of that, override your configuration with system environment variables.
 
  - :relieved: Tailored for multi-developer comfort
- - :sparkles: Cast inputs to correct type
+ - :sparkles: Cast and transforms inputs to correct type
  - :blue_heart: Typescript friendly
  - :muscle: Designed for multi-environment apps
  - :see_no_evil: Anonymized configuration for logger
@@ -40,18 +43,19 @@ npm install configuru
 ### Use
 `config.ts`
 ```typescript
-import { createLoaders } from 'configuru';
+import { createLoader, values } from 'configuru';
 
 // create loader that cascades overrides and creates a config storage
-const { configLoader } = createLoaders();
+const loader = createLoader();
 
-export default {
+// Pass configuration schema to `values` transformer to get configuration
+export default values({
     server: {
         // use loader accessors, place them in custom structure
         // loader parses correct type from store
-        port: configLoader.number('SERVER_PORT'),
+        port: loader.number('SERVER_PORT'),
     },
-};
+});
 ```
 
 `foo.ts`
@@ -77,17 +81,17 @@ Configuration is merged from three sources with override priorities as described
 ### Hidden variables, secrets and logging
 `config.ts`
 ```typescript
-import { createLoaders } from 'configuru';
-const { anonymizedConfigLoader, configLoader } = createLoaders();
+import { createLoader, values, safeValues } from 'configuru';
+const loader = createLoader();
 
 // create `buildConfig` function, we will use two loaders
-const buildConfig = (loader: typeof configLoader) => ({
+const configSchema = {
     // add hidden flag
     apiKey: loader.string.hidden('SECRET_KEY'),
-});
+};
 
-export default buildConfig(configLoader);
-export const safeConfig = buildConfig(anonymizedConfigLoader);
+export default values(configSchema);
+export const safeConfig = safeValues(configSchema);
 ```
 `foo.ts`
 ```typescript
@@ -102,8 +106,8 @@ safeConfig.apiKey; // szvor***g1Xip
 
 ### Options
 ```typescript
-import { createLoaders } from 'configuru';
-const { configLoader } = createLoaders({
+import { createLoader } from 'configuru';
+const loader = createLoader({
     defaultConfigPath: 'default-config.json'; // defaults to ".env.json"
     userConfigPath: process.env.USER_CONFIG; // defaults to process.env.CFG_JSON_PATH
     envMode?: 'all'; // defaults to "default"
@@ -118,30 +122,59 @@ const { configLoader } = createLoaders({
     3. `merged` - Load (override) only vars with keys from either (user or default) config
     4. `none` - Don't use env variables
 
-### Types don't match
+### Mismatch types
 
 Configuru is type safe, but you can run into problems, having an enum value parsed as a string.
 Since there is no enum loader, thus no validation, the value can be anything.
 
-Suggested solution is to be optimistic and typecast it :speak_no_evil:
-
 ```typescript
-type Level = 'info'|'warn';
-const createLogger = (level: Level) => {/*...*/}
+const loader = createLoader();
+type Level = 'info'|'warn'|'unknown';
+const createLogger = (opts: { defaultLevel: Level }) => { /*...*/ }
 
-const config1 = {
+const config1 = values({
     defaultLevel: loader.string('LOGGER_DEFAULT_LEVEL'),
-}; // type -> { defaultLevel: string }
+}); // type -> { defaultLevel: string }
 
 createLogger(config1); // error: string not assignable to Level
+```
 
-const config2 = {
-    defaultLevel: loader.string('LOGGER_DEFAULT_LEVEL') as Level,
-}; // type -> { defaultLevel: Level }
+To solve it, you can create a custom loader
+
+```typescript
+// create custom loader
+const levelLoader = loader.custom(x => {
+    let level: Level = 'unknown';
+    if (x === 'info' || x === 'warn') {
+        level = x;
+    }
+    return level;
+});
+// or just
+const optimisticLevelLoader = loader.custom(x => x as Level);
+
+const config2 = values({
+    defaultLevel: levelLoader('LOGGER_DEFAULT_LEVEL'),
+}); // type -> { defaultLevel: Level }
 
 createLogger(config2); // OK
 ```
 
+### Custom loaders
+
+Default loaders not enough? You can use custom loaders to create any transformation you want and types will be inferred from the return type of you function.
+
+```typescript
+// 'PHOTO-2019-04-01' => { type: 'PHOTO', date: Date }
+const stampLoader = loader.custom(x => {
+    const [type, y, m, d] = x.split('-');
+    return { type, date: new Date(y, m, d) };
+})
+
+const config = values({
+    stamp: stampLoader('LOGGER_DEFAULT_LEVEL'),
+}); // type -> { stamp: { type: any, date: Date } };
+```
 
 ## Best practices
  - Always use flat structure in JSON files (create logical hierarchy in your app when building config with loader)
