@@ -1,5 +1,4 @@
-import { isObject } from 'util';
-import { anonymize } from './helpers';
+import { anonymize, isObject } from './helpers';
 import { LoadedValue } from './loader';
 
 type LoadedToValue<X> = X extends LoadedValue<any, any> ? X['value'] : X;
