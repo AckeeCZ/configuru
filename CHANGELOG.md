@@ -8,10 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Incorrect transformation of arrays to object by polishers
 
+### Added
+- Descriptive errors on invalid config files
+
 ## [0.2.0] - 2019-04-30
 ### Added
 - Custom loaders
-- Descriptive errors on invalid config files
 
 ### Changed
 - **[breaking]** Unified loaders and introduced `values` and `safeValues` polishers to trasnform the loaded schema
