@@ -10,6 +10,11 @@ Object {
   },
   "withConstant": Object {
     "ans": 42,
+    "bar": Array [
+      "b",
+      "a",
+      "r",
+    ],
     "baz": "***",
     "quix": "abcd***wxyz",
   },
@@ -26,6 +31,11 @@ Object {
   },
   "withConstant": Object {
     "ans": 42,
+    "bar": Array [
+      "b",
+      "a",
+      "r",
+    ],
     "baz": 123,
     "quix": "abcdefghijklmnopqrstuvwxyz",
   },

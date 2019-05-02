@@ -26,6 +26,7 @@ const config1 = {
         baz: number.hidden('BAZ'),
         ans: 42,
         quix: string.hidden('QUIX'),
+        bar: ['b', 'a', 'r'],
     },
 };
 const config1Values = values(config1);
@@ -52,6 +53,7 @@ const config1 = {
         baz: number.hidden('BAZ'),
         ans: 42,
         quix: string.hidden('QUIX'),
+        bar: ['b', 'a', 'r'],
     },
 };
 
@@ -62,7 +64,7 @@ describe('polishers', () => {
         });
         test('types', () => {
             expect(typeTest('typeof config1Values')).toMatchInlineSnapshot(
-                '"{ my: { deep: { poem: string; }; }; bar: string; withConstant: { baz: number; ans: number; quix: string; }; }"'
+                '"{ my: { deep: { poem: string; }; }; bar: string; withConstant: { baz: number; ans: number; quix: string; bar: string[]; }; }"'
             );
         });
     });
@@ -72,7 +74,7 @@ describe('polishers', () => {
         });
         test('types', () => {
             expect(typeTest('typeof config1SafeValues')).toMatchInlineSnapshot(
-                '"{ my: { deep: { poem: string; }; }; bar: string; withConstant: { baz: string; ans: number; quix: string; }; }"'
+                '"{ my: { deep: { poem: string; }; }; bar: string; withConstant: { baz: string; ans: number; quix: string; bar: string[]; }; }"'
             );
         });
     });
