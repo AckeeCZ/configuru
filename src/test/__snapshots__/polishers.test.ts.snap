@@ -2,6 +2,14 @@
 
 exports[`polishers safeValues integration 1`] = `
 Object {
+  "array": Array [
+    Object {
+      "fox": "***",
+    },
+    Object {
+      "sox": "123",
+    },
+  ],
   "bar": "bar",
   "my": Object {
     "deep": Object {
@@ -23,6 +31,14 @@ Object {
 
 exports[`polishers values integration 1`] = `
 Object {
+  "array": Array [
+    Object {
+      "fox": 123,
+    },
+    Object {
+      "sox": "123",
+    },
+  ],
   "bar": "bar",
   "my": Object {
     "deep": Object {
