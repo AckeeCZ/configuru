@@ -28,6 +28,10 @@ const config1 = {
         quix: string.hidden('QUIX'),
         bar: ['b', 'a', 'r'],
     },
+    array: [
+        { fox: number.hidden('BAZ') },
+        { sox: '123' },
+    ],
 };
 const config1Values = values(config1);
 const config1SafeValues = safeValues(config1);
@@ -55,8 +59,10 @@ const config1 = {
         quix: string.hidden('QUIX'),
         bar: ['b', 'a', 'r'],
     },
+    array: [{ fox: number.hidden('BAZ') }, { sox: '123' }],
 };
 
+/* tslint:disable:ter-max-len */
 describe('polishers', () => {
     describe('values', () => {
         test('integration', () => {
@@ -64,7 +70,7 @@ describe('polishers', () => {
         });
         test('types', () => {
             expect(typeTest('typeof config1Values')).toMatchInlineSnapshot(
-                '"{ my: { deep: { poem: string; }; }; bar: string; withConstant: { baz: number; ans: number; quix: string; bar: string[]; }; }"'
+                '"{ my: { deep: { poem: string; }; }; bar: string; withConstant: { baz: number; ans: number; quix: string; bar: string[]; }; array: ({ fox: number; sox?: undefined; } | { sox: string; fox?: undefined; })[]; }"'
             );
         });
     });
@@ -74,7 +80,7 @@ describe('polishers', () => {
         });
         test('types', () => {
             expect(typeTest('typeof config1SafeValues')).toMatchInlineSnapshot(
-                '"{ my: { deep: { poem: string; }; }; bar: string; withConstant: { baz: string; ans: number; quix: string; bar: string[]; }; }"'
+                '"{ my: { deep: { poem: string; }; }; bar: string; withConstant: { baz: string; ans: number; quix: string; bar: string[]; }; array: ({ fox: string; sox?: undefined; } | { sox: string; fox?: undefined; })[]; }"'
             );
         });
     });
