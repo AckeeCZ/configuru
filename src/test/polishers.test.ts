@@ -28,6 +28,10 @@ const config1 = {
         quix: string.hidden('QUIX'),
         bar: ['b', 'a', 'r'],
     },
+    array: [
+        { fox: number.hidden('BAZ') },
+        { sox: '123' },
+    ],
 };
 const config1Values = values(config1);
 const config1SafeValues = safeValues(config1);
@@ -55,6 +59,7 @@ const config1 = {
         quix: string.hidden('QUIX'),
         bar: ['b', 'a', 'r'],
     },
+    array: [{ fox: number.hidden('BAZ') }, { sox: '123' }],
 };
 
 describe('polishers', () => {
