@@ -1,6 +1,6 @@
 export const anonymize = (val: any) => {
     const str = String(val);
-    const show = str.length / 6;
+    const show = Math.min(str.length / 6, 10);
     return [str.slice(0, show), '***', str.slice(str.length + 1 - show, str.length)].join('');
 };
 
