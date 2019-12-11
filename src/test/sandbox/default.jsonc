@@ -1,0 +1,10 @@
+{
+    // Inline comment
+    "foo": "default",
+    /*
+        Block comment
+    */
+    "bar": 1,
+    "baz": 2,
+    "defaultConfig": true
+}

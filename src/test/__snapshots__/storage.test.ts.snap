@@ -22,6 +22,15 @@ Object {
 }
 `;
 
+exports[`storage Default (jsonc) 1`] = `
+Object {
+  "bar": 1,
+  "baz": 2,
+  "defaultConfig": true,
+  "foo": "default",
+}
+`;
+
 exports[`storage Default 1`] = `
 Object {
   "bar": 1,
