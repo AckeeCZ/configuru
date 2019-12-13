@@ -1,12 +1,14 @@
 import { readFileSync } from 'fs';
 import * as path from 'path';
+import { JSONC } from './helpers';
 import { ConfigLoaderOptions } from './loader';
+
 const fromPairs = (pairs: Array<[keyof any, any]>) => Object.assign({}, ...Array.from(pairs, ([k, v]) => ({ [k]: v })));
 const { keys } = Object;
 
 const loadFile = (filePath?: string) => {
     try {
-        return filePath ? JSON.parse(readFileSync(filePath, 'utf-8')) : {};
+        return filePath ? JSONC.parse(readFileSync(filePath, 'utf-8')) : {};
     } catch (error) {
         throw new Error(`Missing or invalid config file \`${filePath}\` at ${path.join(path.resolve('.'), filePath!)}`);
     }

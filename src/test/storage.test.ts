@@ -10,6 +10,11 @@ describe('storage', () => {
             createConfigStorage({ defaultConfigPath: resolve(__dirname, './sandbox/default.json') })
         ).toMatchSnapshot();
     });
+    test('Default (jsonc)', () => {
+        expect(
+            createConfigStorage({ defaultConfigPath: resolve(__dirname, './sandbox/default.jsonc') })
+        ).toMatchSnapshot();
+    });
     test('Default & user', () => {
         expect(
             createConfigStorage({

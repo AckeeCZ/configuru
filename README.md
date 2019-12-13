@@ -27,6 +27,7 @@ Configuru is a library for configuration management. Merge default project confi
  - :blue_heart: Typescript friendly
  - :muscle: Designed for multi-environment apps
  - :see_no_evil: Anonymized configuration for logger
+ - 💬 JSONC support
 
 
 ## Getting started
