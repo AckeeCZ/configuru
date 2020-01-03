@@ -50,6 +50,7 @@ export const createAtomLoaderFactory = (storage: Record<any, any>) => {
 };
 
 export const createLoader = (opts: ConfigLoaderOptions = defaultOpts) => {
+    opts = { ...defaultOpts, ...opts };
     const configStorage = createConfigStorage(opts);
     const atomLoader = createAtomLoaderFactory(configStorage);
     return {
