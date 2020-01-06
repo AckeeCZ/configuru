@@ -25,6 +25,13 @@ export const createAtomLoaderFactory = (storage: Record<any, any>) => {
     const load = <T, N extends boolean>(transform: (x: any) => T, hidden: boolean, nullable: boolean) => (
         key: string
     ): LoadedValue<T, N> => {
+        const safeTransform = (x: any) => {
+            try {
+                return transform(x);
+            } catch (e) {
+                throw new Error(`Failed to transform value >${value}< from key >${key}<`);
+            }
+        };
         const value = storage[key];
         const missing = value === undefined || value === null;
         if (!nullable && missing) {
@@ -34,7 +41,7 @@ export const createAtomLoaderFactory = (storage: Record<any, any>) => {
             hidden,
             nullable,
             rawValue: value,
-            value: missing ? null : (transform(value) as any),
+            value: missing ? null : (safeTransform(value) as any),
             __CONFIGURU_LEAF: true,
         };
     };
