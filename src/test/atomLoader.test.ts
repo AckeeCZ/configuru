@@ -1,4 +1,4 @@
-import { createAtomLoaderFactory } from 'lib/loader';
+import { createAtomLoaderFactory } from '../lib/loader';
 
 const config = {
     string: 'string',
