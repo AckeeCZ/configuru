@@ -5,6 +5,23 @@ describe('storage', () => {
     test('Empty', () => {
         expect(createConfigStorage({})).toEqual({});
     });
+    test('Non-existent file throws error', () => {
+        expect(() => createConfigStorage({ defaultConfigPath: resolve(__dirname, './sandbox/dayum') })).toThrow(
+            /exist/
+        );
+    });
+    test('Non-valid file throws error', () => {
+        expect(() => createConfigStorage({ defaultConfigPath: resolve(__dirname, './sandbox/invalid') })).toThrow(
+            /valid/
+        );
+    });
+    test('Extension not required', () => {
+        const def = createConfigStorage({ defaultConfigPath: resolve(__dirname, './sandbox/default') });
+        const defJson = createConfigStorage({ defaultConfigPath: resolve(__dirname, './sandbox/default.json') });
+        const defJsonc = createConfigStorage({ defaultConfigPath: resolve(__dirname, './sandbox/default.jsonc') });
+        expect(def).toStrictEqual(defJson);
+        expect(defJson).toStrictEqual(defJsonc);
+    });
     test('Default', () => {
         expect(createConfigStorage({ defaultConfigPath: resolve(__dirname, './sandbox/default.json') }))
             .toMatchInlineSnapshot(`

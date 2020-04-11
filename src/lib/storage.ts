@@ -1,16 +1,28 @@
-import { readFileSync } from 'fs';
-import * as path from 'path';
+import { existsSync, readFileSync } from 'fs';
+import { format, join, parse, resolve } from 'path';
 import { JSONC } from './helpers';
 import { ConfigLoaderOptions } from './loader';
 
 const fromPairs = (pairs: Array<[keyof any, any]>) => Object.assign({}, ...Array.from(pairs, ([k, v]) => ({ [k]: v })));
+const uniq = <T>(xs: T[]) => Array.from(new Set(xs));
 const { keys } = Object;
 
 const loadFile = (filePath?: string) => {
+    if (!filePath) return {};
+    const { dir, name } = parse(filePath);
+    const testPaths = uniq([filePath, format({ dir, name, ext: '.json' }), format({ dir, name, ext: '.jsonc' })]);
+    const resolvedPath = testPaths.find(existsSync);
+    if (!resolvedPath) {
+        throw new Error(
+            `File path set, but none of the following tested derivations exist:\n${testPaths
+                .map(p => ` - ${join(resolve('.'), p)}`)
+                .join('\n')}`
+        );
+    }
     try {
-        return filePath ? JSONC.parse(readFileSync(filePath, 'utf-8')) : {};
+        return JSONC.parse(readFileSync(resolvedPath, 'utf-8'));
     } catch (error) {
-        throw new Error(`Missing or invalid config file \`${filePath}\` at ${path.join(path.resolve('.'), filePath!)}`);
+        throw new Error(`Invalid config file in ${join(resolve('.'), resolvedPath!)}`);
     }
 };
 
