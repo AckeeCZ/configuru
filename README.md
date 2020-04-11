@@ -38,8 +38,20 @@ npm install configuru
 ```
 
 ### Setup
-1. Create `.env.json` in root of your project, add defaults and placeholders
-2. _(optional)_ Create custom (e.g. `~/.env/my-project.json`) and save the path in your `CFG_JSON_PATH`. Use it to override your defaults
+1. Create `.env.jsonc` in root of your project, add defaults or placeholders. It can look like this:
+```jsonc
+{
+    // HTTP server
+    "SERVER_PORT": 3000, // port the server will be listening on
+}
+```
+2. _(optional)_ Create custom (e.g. `~/.env/my-project.jsonc`) and save the path in your `CFG_JSON_PATH`. Use it to override your defaults
+```json
+{
+    "SERVER_PORT": 3001,
+}
+```
+🦉 If you want to, you can omit the `SERVER_PORT` in your configuration (to leave the single value to default `3000`), or not set your custom configuration at all.
 
 ### Use
 `config.ts`
@@ -79,6 +91,16 @@ Configuration is merged from three sources with override priorities as described
 
 ## Advanced usage
 
+### Constant parameters
+Sometimes it makes sense to have a static parameter in configuration. For example, when connecting to third party service, you want to have api key configurable per environment, but connection options not. You can insert in your configuration schema constant values of any type without loader and use Configuru for application parameters as well.
+```typescript
+const configSchema = {
+    configurable: loader.string('KEY'),
+    static: 'foo',
+};
+// { configurable: <loaded value>, static: 'foo' }
+const { configurable, static } = values(configSchema);
+```
 ### Hidden variables, secrets and logging
 `config.ts`
 ```typescript
@@ -109,7 +131,7 @@ safeConfig.apiKey; // szvor***g1Xip
 ```typescript
 import { createLoader } from 'configuru';
 const loader = createLoader({
-    defaultConfigPath: 'default-config.json'; // defaults to ".env.json"
+    defaultConfigPath: 'default-config'; // defaults to ".env"
     userConfigPath: process.env.USER_CONFIG; // defaults to process.env.CFG_JSON_PATH
     envMode?: 'all'; // defaults to "default"
 });
@@ -122,6 +144,8 @@ const loader = createLoader({
     2. `default` - Load (override) only vars with keys from default config
     3. `merged` - Load (override) only vars with keys from either (user or default) config
     4. `none` - Don't use env variables
+
+🦉 When configuring configuru, you can always use paths with or without extension, it will try to find any of the supported formats via replacing/adding valid extensions.
 
 ### Mismatch types
 
@@ -173,15 +197,45 @@ const stampLoader = loader.custom(x => {
 })
 
 const config = values({
-    stamp: stampLoader('LOGGER_DEFAULT_LEVEL'),
+    stamp: stampLoader('STAMP'),
 }); // type -> { stamp: { type: any, date: Date } };
 ```
 
 ## Best practices
- - Always use flat structure in JSON files (create logical hierarchy in your app when building config with loader)
- - For config keys, use `CAPITALIZED_WITH_UNDERSCORES` case, as is conventional for env variables
- - Keep all variables used by loader in you default config, keep it version in the project. Store default values or placeholders. It will be a perfect starting point for custom configs.
+ - Always **use flat structure** in JSON files (create logical hierarchy in your app when building config with loader)
+ - For config keys, **use `CAPITALIZED_WITH_UNDERSCORES` case**, as is conventional for env variables
+ - **Keep all variables used by loader in you default config**, add to VCS. Store default values or placeholders. It will be a perfect starting point for custom configs.
+ - Keep your configuration interface **minimal**. If you don't need to configure parameter for different environments, use constant parameter without loader.
+ - Even though you can use plain `JSON` for config values, **prefer `JSONc`** and add comments to your variables.
+ - **Keep your `.env.jsonc` well structured and well documented**. Setting up the configuration should not require thorough prior knowledge of the implementation.
 
+### When to use placeholder, when default value?
+
+![](http://www.plantuml.com/plantuml/svg/POwnJWCn38RtF8KbbkihqA5bP623xHRVdNCnEFOfSO2-FQ65WbGFaNxz__Sfn-fOl6K9zOrrmu8PigdDgLWcyDBeNxDGn2R-J9_-8Bng9dMO-qCbd4KXS8HXr2TyjS9-0elGAfKAipLPHkq1FjYJjGucr9LrFOow0q-aC9oexWBq-zOyLc3le4PUI9rH3ZSxaYuSr7hwkRjfckvVAlr-5jvH6kslVNNRBgWk7CEVu9B3bTy4Pqgs29LzE5FXs3SjonS0)
+
+Examples:
+ - Setting default of `SQL_PORT` to `5432` is a good idea if you are using PostgreSQL. Similarly for MySQL, a reasonable default value would be `3306`
+ - Default `3000` for your HTTP server might be reasonable, if it is a convention of your developer team and/or its is wired e.g. in your Dockerfile anyway. Developers can still change it collides with any local running processes.
+ - Using credentials to your testing infrastructure as a default is wrong, even though it would make setup for developers easier in some scenarios. It would be confidential info in your repo history.
+
+### Recommended structure for `.env.jsonc`
+
+```jsonc
+{
+    // Server
+    "SERVER_PORT": 3000,
+
+    // Development
+    "LOGGER_PRETTY": false, // colorful formatted logs
+    "DEV_ERRORS": false, // if true, return error details, including stack trace (affects only response, full details are always logged)
+
+    // Logging
+    "LOGGER_DEFAULT_LEVEL": "debug", // silent, fatal, error, warn, info, debug, trace
+}
+```
+1. If you find your configuration file harder to navigate through, use sections seperated by a newline with a comment
+2. If name is not self-explanatory, use brief comment to explain how is the value interpreted
+3. Do not include tautological comments (`"SERVER_PORT": 3000, // server port`)
 
 ## See also
 
