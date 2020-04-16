@@ -8,7 +8,7 @@ export interface ConfigLoaderOptions {
 }
 
 const defaultOpts: ConfigLoaderOptions = {
-    defaultConfigPath: '.env.json',
+    defaultConfigPath: '.env',
     userConfigPath: process.env.CFG_JSON_PATH,
     envMode: 'default',
 };
