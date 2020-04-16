@@ -1,6 +1,6 @@
 import { inspectWithPreamble } from 'intspector';
-import { createAtomLoaderFactory } from 'lib/loader';
-import { safeValues, values } from 'lib/polishers';
+import { createAtomLoaderFactory } from '../lib/loader';
+import { safeValues, values } from '../lib/polishers';
 
 const typeTest = inspectWithPreamble(`
 import { createAtomLoaderFactory } from 'lib/loader';

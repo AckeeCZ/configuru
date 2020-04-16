@@ -1,5 +1,5 @@
-import { createConfigStorage } from 'lib/storage';
 import { resolve } from 'path';
+import { createConfigStorage } from '../lib/storage';
 
 describe('storage', () => {
     test('Empty', () => {

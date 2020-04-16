@@ -1,4 +1,6 @@
-import { createAtomLoaderFactory } from 'lib/loader';
+import { resolve } from 'path';
+import { createAtomLoaderFactory, createLoader } from '../lib/loader';
+import { values } from '../lib/polishers';
 
 const config = {
     string: 'string',
@@ -7,7 +9,18 @@ const config = {
     null: null,
 };
 
-const stringLoader = createAtomLoaderFactory(config)(x => String(x));
+const stringLoader = createAtomLoaderFactory(config)((x) => String(x));
+
+describe('loader', () => {
+    const { string, custom } = createLoader({ defaultConfigPath: resolve(__dirname, './sandbox/loader.jsonc') });
+    const schema = {
+        foo: string('FOO'),
+        stamp: custom((foo) => `${foo}bar`)('FOO'),
+    };
+    const { foo, stamp } = values(schema);
+    expect(foo).toMatchInlineSnapshot('"foo"');
+    expect(stamp).toMatchInlineSnapshot('"foobar"');
+});
 
 describe('atomLoader', () => {
     describe('string loader', () => {

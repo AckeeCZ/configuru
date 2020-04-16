@@ -1,24 +1,18 @@
 language: node_js
 node_js:
-- '7'
 - '8'
 - '9'
 - '10'
-
-before_script:
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter before-build
+- '11'
+- '12'
+- '13'
 
 script:
 - npm run lint
 - npm run build
 - npm run test:coverage
+- npm run test:codecov
 - npm run docs
-
-after_script:
-  - echo $TRAVIS_TEST_RESULT
-  - ./cc-test-reporter after-build --debug --exit-code $TRAVIS_TEST_RESULT
 
 deploy:
   - provider: npm
