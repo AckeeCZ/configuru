@@ -4,7 +4,7 @@ exports[`polishers safeValues integration 1`] = `
 Object {
   "array": Array [
     Object {
-      "fox": "***",
+      "fox": "[redacted]",
     },
     Object {
       "sox": "123",
@@ -24,8 +24,8 @@ Object {
       "a",
       "r",
     ],
-    "baz": "***",
-    "quix": "abcd***wxyz",
+    "baz": "[redacted]",
+    "quix": "[redacted]",
   },
 }
 `;
