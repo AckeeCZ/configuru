@@ -19,7 +19,7 @@ const isLoadedValue = (x: any) => Object.keys(x || {}).includes('__CONFIGURU_LEA
 
 const mapConfig = (fn: (v: LoadedValue<any, any>) => any) => (val: any): any => {
     if (isLoadedValue(val)) {
-        return fn(val);
+        return mapConfig(fn)(fn(val));
     }
     if (Array.isArray(val)) {
         return val.map(mapConfig(fn));
