@@ -200,6 +200,39 @@ const config = values({
 }); // type -> { stamp: { type: any, date: Date } };
 ```
 
+Custom loaders can also return an object that contains nested loaders. Meaning you can have a custom loader that 
+loads a value from storage and based on that value returns another objects (or an array of objects) that themselves may contain loaders.
+
+This can be particularly useful for arrays of connection strings that may contain sensitive information like passwords. This will give you type-safe array of objects, while still supporting hidden loaders.
+
+```typescript
+// env.json
+// {
+//   "PASSWORD": "pwd",
+//   "HOSTS": "host1,host2"
+// }
+const schema = {
+  connections: loader.custom(x => {
+    return x.split(',').map(host => ({
+      host,
+      password: loader.string.hidden('PASSWORD'),      
+    }))
+  })('HOSTS')
+}
+
+console.log(safeValues(schema));
+// [
+//     {
+//         "host": "host1",
+//         "foo": "[redacted]"
+//     },
+//     {
+//         "host": "host2",
+//         "foo": "[redacted]"
+//     }
+// ]
+```
+
 ## Best practices
  - Always **use flat structure** in JSON files (create logical hierarchy in your app when building config with loader)
  - For config keys, **use `CAPITALIZED_WITH_UNDERSCORES` case**, as is conventional for env variables
