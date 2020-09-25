@@ -16,10 +16,29 @@ describe('loader', () => {
     const schema = {
         foo: string('FOO'),
         stamp: custom((foo) => `${foo}bar`)('FOO'),
+        expanded: custom((x) => {
+            return x.split('').map((letter: string) => ({ s: letter, foo: string('FOO') }));
+        })('FOO'),
     };
-    const { foo, stamp } = values(schema);
+    const { foo, stamp, expanded } = values(schema);
     expect(foo).toMatchInlineSnapshot('"foo"');
     expect(stamp).toMatchInlineSnapshot('"foobar"');
+    expect(expanded).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "foo": "foo",
+            "s": "f",
+          },
+          Object {
+            "foo": "foo",
+            "s": "o",
+          },
+          Object {
+            "foo": "foo",
+            "s": "o",
+          },
+        ]
+    `);
 });
 
 describe('atomLoader', () => {
