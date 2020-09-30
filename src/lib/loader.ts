@@ -36,7 +36,7 @@ export const createAtomLoaderFactory = (storage: Record<any, any>) => {
         return transform(x)
       } catch (e) {
         throw new Error(
-          `Failed to transform value >${value}< from key >${key}<`
+          `Failed to transform value >${String(value)}< from key >${key}<`
         )
       }
     }

@@ -3,9 +3,9 @@ import { LoadedValue } from './loader'
 
 type LoadedToValue<X> = X extends LoadedValue<any, any> ? X['value'] : X
 
-type Values<C> = C extends Function
+type Values<C> = C extends (...args: any[]) => any
   ? C
-  : C extends object
+  : C extends Record<any, any>
   ? {
       [K in keyof C]: C[K] extends LoadedValue<any, any>
         ? LoadedToValue<C[K]>
@@ -13,9 +13,9 @@ type Values<C> = C extends Function
     }
   : C
 
-type AnonymousValues<C> = C extends Function
+type AnonymousValues<C> = C extends (...args: any[]) => any
   ? C
-  : C extends object
+  : C extends Record<any, any>
   ? {
       [K in keyof C]: C[K] extends LoadedValue<any, any>
         ? string

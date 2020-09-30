@@ -17,7 +17,7 @@ describe('loader', () => {
   })
   const schema = {
     foo: string('FOO'),
-    stamp: custom(foo => `${foo}bar`)('FOO'),
+    stamp: custom((foo: string) => `${foo}bar`)('FOO'),
     expanded: custom(x => {
       return x
         .split('')

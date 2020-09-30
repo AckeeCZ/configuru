@@ -35,7 +35,7 @@ const loadFile = (filePath?: string) => {
     return JSONC.parse(readFileSync(resolvedPath, 'utf-8'))
   } catch (error) {
     throw new Error(
-      `Invalid config file in ${join(resolve('.'), resolvedPath!)}`
+      `Invalid config file in ${join(resolve('.'), resolvedPath)}`
     )
   }
 }
@@ -62,6 +62,5 @@ export const createConfigStorage = (
   } else if (opts.envMode === 'all') {
     envConfig = process.env
   }
-  const configStorage = { ...defaultConfig, ...userConfig, ...envConfig }
-  return configStorage
+  return { ...defaultConfig, ...userConfig, ...envConfig }
 }
