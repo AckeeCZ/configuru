@@ -1,9 +1,4 @@
 {
-  "*.ts": [
-    "prettier --write",
-    "tslint --fix",
-    "git add",
-    "npm run lint",
-    "npm test -- --ci --findRelatedTests"
-  ]
+  "*.ts": ["prettier --write", "eslint --fix"],
+  "*.{ts,js,json,md}": "prettier --write"
 }

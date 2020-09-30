@@ -1,1 +1,1 @@
-module.exports = require('prettier-config-ackee/backend');
+module.exports = require('@ackee/styleguide-backend-config/prettier')
