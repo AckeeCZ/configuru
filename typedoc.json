@@ -1,7 +1,7 @@
 {
-    "includeDeclarations": true,
-    "excludeExternals": true,
-    "name": "Configurator",
-    "mode": "file",
-    "out": "docs"
+  "includeDeclarations": true,
+  "excludeExternals": true,
+  "name": "Configurator",
+  "mode": "file",
+  "out": "docs"
 }
