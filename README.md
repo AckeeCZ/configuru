@@ -4,7 +4,6 @@
 
 <h1>Configuru<img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/google/146/gear_2699.png" width=30 /></h1>
 
-
 [![Build Status](https://flat.badgen.net/travis/AckeeCZ/configuru)](https://travis-ci.com/AckeeCZ/configuru)
 [![Npm](https://flat.badgen.net/npm/v/configuru)](https://www.npmjs.com/package/configuru)
 [![Coverage](https://flat.badgen.net/codecov/c/github/AckeeCZ/configuru)](https://codecov.io/gh/AckeeCZ/configuru)
@@ -30,20 +29,24 @@ Configuru is a library for configuration management. Merge default project confi
 ## Getting started
 
 1. Install
+
 ```bash
 npm install configuru
 ```
 
 2. Create `.env.jsonc` in root of your project, add defaults or placeholders.
+
 ```jsonc
 {
   // HTTP server
   "SERVER_PORT": 3000 // port the server will be listening on
 }
 ```
+
 3. _(optional)_ As a developer (or environment), create a custom override file (e.g. `~/.env/my-project.jsonc`) and save the path in your `CFG_JSON_PATH`.
 
 4. Create a configuration module (e.g. `config.ts`)
+
 ```typescript
 import { createLoader, values } from 'configuru'
 
@@ -61,6 +64,7 @@ export default values({
 ```
 
 5. Use your configuration params throughout your app
+
 ```typescript
 import config from './config' // e.g. { server: { port: 3000 } }
 
@@ -72,7 +76,6 @@ console.log(config.server.port) // 3000
 - [Config storage precedence](./wiki/storage-precedence.md)
 - [Advanced usage](./wiki/advanced-usage.md)
 - [Best practices](./wiki/best-practices.md)
-
 
 ## See also
 

@@ -4,7 +4,6 @@ about: Create a report to help us improve
 title: ''
 labels: bug
 assignees: ''
-
 ---
 
 **Describe the bug**
@@ -23,13 +22,15 @@ assignees: ''
 
 Configuru version: `x.y.z`
 Relevant environemnt variables / configuration files:
+
 ```
 CFG_JSON_PATH=~/.env/my-project.jsonc
 ```
+
 ```jsonc
 {
-    // HTTP server
-    "SERVER_PORT": 3000, // port the server will be listening on
+  // HTTP server
+  "SERVER_PORT": 3000 // port the server will be listening on
 }
 ```
 
