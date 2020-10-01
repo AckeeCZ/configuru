@@ -1,2 +1,2 @@
-export { createLoader } from './lib/loader';
-export { values, safeValues } from './lib/polishers';
+export { createLoader } from './lib/loader'
+export { values, safeValues } from './lib/polishers'

@@ -1,10 +1,7 @@
 {
-    "defaultSeverity": "error",
-    "extends": [
-        "tslint-config-ackee"
-    ],
-    "jsRules": {},
-    "rules": {
-    },
-    "rulesDirectory": []
+  "defaultSeverity": "error",
+  "extends": ["tslint-config-ackee"],
+  "jsRules": {},
+  "rules": {},
+  "rulesDirectory": []
 }
