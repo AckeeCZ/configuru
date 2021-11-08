@@ -1,7 +1,7 @@
 import { anonymize, isObject } from './helpers'
 import { LoadedValue } from './loader'
 
-type LoadedToValue<X> = X extends LoadedValue<any, any> ? X['value'] : X
+type LoadedToValue<X> = X extends LoadedValue<any, any> ? X['value'] extends Record<any, any> ? Values<X['value']> : X['value'] : X;
 
 type Values<C> = C extends (...args: any[]) => any
   ? C
