@@ -27,4 +27,7 @@ jobs:
         run: npm i --ignore-scripts
 
       - name: Run tests
-        run: npm run lint
+        run: npm run cs:eslint:check
+
+      - name: Run tests
+        run: npm run cs:prettier:check
