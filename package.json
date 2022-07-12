@@ -7,6 +7,9 @@
     "Jaroslav Šmolík <grissius@gmail.com>"
   ],
   "main": "./dist/index.js",
+  "engines": {
+    "node": ">=12"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/AckeeCZ/configuru"
@@ -38,7 +41,7 @@
     "cs:eslint:fix": "npm run cs:eslint:check -- --fix",
     "cs:prettier:check": "prettier --ignore-path .gitignore --check '**/*.{ts,js,json,md}'",
     "cs:prettier:fix": "npm run cs:prettier:check -- --write '**/*.{ts,js,json,md}'",
-    "prepare": "npm run build",
+    "prepare": "husky install",
     "docs": "typedoc --options typedoc.json src/lib/*.ts",
     "check": "npm-check -i app -i errors -i config -i index & exit 0"
   },
