@@ -1,7 +1,11 @@
 import { anonymize, isObject } from './helpers'
 import { LoadedValue } from './loader'
 
-type LoadedToValue<X> = X extends LoadedValue<any, any> ? X['value'] extends Record<any, any> ? Values<X['value']> : X['value'] : X;
+type LoadedToValue<X> = X extends LoadedValue<any, any>
+  ? X['value'] extends Record<any, any>
+    ? Values<X['value']>
+    : X['value']
+  : X
 
 type Values<C> = C extends (...args: any[]) => any
   ? C
@@ -26,23 +30,23 @@ type AnonymousValues<C> = C extends (...args: any[]) => any
 const isLoadedValue = (x: any) =>
   Object.keys(x || {}).includes('__CONFIGURU_LEAF')
 
-const mapConfig = (fn: (v: LoadedValue<any, any>) => any) => (
-  val: any
-): any => {
-  if (isLoadedValue(val)) {
-    return mapConfig(fn)(fn(val))
+const mapConfig =
+  (fn: (v: LoadedValue<any, any>) => any) =>
+  (val: any): any => {
+    if (isLoadedValue(val)) {
+      return mapConfig(fn)(fn(val))
+    }
+    if (Array.isArray(val)) {
+      return val.map(mapConfig(fn))
+    }
+    if (isObject(val)) {
+      return Object.keys(val).reduce((res: any, key) => {
+        res[key] = mapConfig(fn)(val[key])
+        return res
+      }, {})
+    }
+    return val
   }
-  if (Array.isArray(val)) {
-    return val.map(mapConfig(fn))
-  }
-  if (isObject(val)) {
-    return Object.keys(val).reduce((res: any, key) => {
-      res[key] = mapConfig(fn)(val[key])
-      return res
-    }, {})
-  }
-  return val
-}
 
 export const values = mapConfig(x => x.value) as <T extends Record<any, any>>(
   config: T
