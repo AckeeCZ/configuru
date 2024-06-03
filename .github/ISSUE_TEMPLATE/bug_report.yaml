@@ -1,0 +1,47 @@
+name: 🐛 Bug Report
+description: File a bug report.
+title: "🐛 "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🐛 Bug
+  - type: textarea
+    id: bug_description
+    attributes:
+      label: What happened?
+      description: Describe the bug what you encountered.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Please provide the steps to reproduce the bug.
+      value: |
+        -
+        -
+        -
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        ## 💡 Solution
+  - type: textarea
+    id: solution_description
+    attributes:
+      label: What would you like to happen?
+      description: Describe the solution you'd like.
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        ## 🔧 Environment
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Please provide any relevant information about your environment.

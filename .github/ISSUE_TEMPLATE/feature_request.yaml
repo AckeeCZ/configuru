@@ -1,0 +1,41 @@
+name: ✨ Feature Request
+description: Request a new feature.
+title: "✨ "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+       ## ⚠️ Problem
+  - type: textarea
+    id: related_problem
+    attributes:
+      label: Is your feature request related to a problem?
+      description: Please describe the problem you are facing.
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        ## 💡 Solution
+  - type: textarea
+    id: solution_description
+    attributes:
+      label: What feature would you like to see?
+      description: Describe the solution.
+    validations:
+      required: true
+  - type: textarea
+    id: alternative_solution
+    attributes:
+      label: What alternatives have you considered?
+      description: Describe any alternative features you've considered.
+  - type: markdown
+    attributes:
+      value: |
+        ## 🔧 Environment
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: "Please provide any relevant information about your environment."
