@@ -51,6 +51,6 @@ const mapConfig =
 export const values = mapConfig(x => x.value) as <T extends Record<any, any>>(
   config: T
 ) => Values<T>
-export const safeValues = mapConfig(x =>
+export const maskedValues = mapConfig(x =>
   x.hidden ? anonymize(x.rawValue) : x.value
 ) as <T extends Record<any, any>>(config: T) => AnonymousValues<T>
