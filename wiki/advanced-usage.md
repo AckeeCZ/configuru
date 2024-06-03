@@ -18,7 +18,7 @@ const { configurable, static } = values(configSchema)
 `config.ts`
 
 ```typescript
-import { createLoader, values, safeValues } from 'configuru'
+import { createLoader, values, maskedValues } from 'configuru'
 const loader = createLoader()
 
 // create `buildConfig` function, we will use two loaders
@@ -28,30 +28,30 @@ const configSchema = {
 }
 
 export default values(configSchema)
-export const safeConfig = safeValues(configSchema)
+export const maskedConfig = maskedValues(configSchema)
 ```
 
 `foo.ts`
 
 ```typescript
-import config, { safeConfig } from './config'
+import config, { maskedValues } from './config'
 
 // use in your app, never log
 config.apiKey // szvor4VYgS79z3QSBtmN0dJeyXbg1Xip
 
 // don't use, is truncated (or hidden for shorter vars) but okay-ish to log
-safeConfig.apiKey // szvor***g1Xip
+maskedConfig.apiKey // [redacted]
 ```
 
 ### Options
 
 ```typescript
-import { createLoader } from 'configuru';
+import { createLoader } from 'configuru'
 const loader = createLoader({
-    defaultConfigPath: 'default-config'; // defaults to ".env"
-    userConfigPath: process.env.USER_CONFIG; // defaults to process.env.CFG_JSON_PATH
-    envMode?: 'all'; // defaults to "default"
-});
+  defaultConfigPath: 'default-config', // defaults to ".env"
+  userConfigPath: process.env.USER_CONFIG, // defaults to process.env.CFG_JSON_PATH
+  envMode: 'all', // defaults to "default"
+})
 ```
 
 1. `defaultConfigPath`: Where to look for your default config JSON file (provide null to skip)
@@ -140,7 +140,7 @@ const schema = {
   })('HOSTS'),
 }
 
-console.log(safeValues(schema))
+console.log(maskedValues(schema))
 // [
 //     {
 //         "host": "host1",
