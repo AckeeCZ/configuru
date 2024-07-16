@@ -1,6 +1,8 @@
 <div align="center">
 
-<h1>Configuru ⚙️</h1>
+![](logo.png)
+
+<h1>Configuru</h1>
 
 Manage the configuration of your Nodejs application with multiple environments and custom preferences, utilizing Configuru in CI and development as well!
 
