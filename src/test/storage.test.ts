@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 import { resolve } from 'path'
 import { createConfigStorage } from '../lib/storage'
 
