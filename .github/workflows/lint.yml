@@ -12,7 +12,7 @@ jobs:
   lint:
     strategy:
       matrix:
-        node-version: [16, 18, 20, 22]
+        node-version: [18, 20, 22]
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -27,7 +27,7 @@ jobs:
         run: npm i --ignore-scripts
 
       - name: Run tests
-        run: npm run cs:eslint:check
+        run: npm run lint:check
 
       - name: Run tests
-        run: npm run cs:prettier:check
+        run: npm run prettier:check
