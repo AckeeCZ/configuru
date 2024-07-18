@@ -1,1 +1,9 @@
-module.exports = require('@ackee/styleguide-backend-config/eslint')
+const config = require('@ackee/styleguide-backend-config/eslint')
+
+module.exports = {
+  ...config,
+  rules: {
+    ...config.rules,
+    'security/detect-non-literal-fs-filename': 0,
+  },
+}

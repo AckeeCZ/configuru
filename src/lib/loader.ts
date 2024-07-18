@@ -33,16 +33,16 @@ export const createAtomLoaderFactory = (storage: Record<any, any>) => {
       nullable: boolean
     ) =>
     (key: string): LoadedValue<T, N> => {
+      const value = storage[key]
       const safeTransform = (x: any) => {
         try {
           return transform(x)
-        } catch (e) {
+        } catch (_error) {
           throw new Error(
             `Failed to transform value >${String(value)}< from key >${key}<`
           )
         }
       }
-      const value = storage[key]
       const missing = value === undefined || value === null
       if (!nullable && missing) {
         throw new Error(`Missing required value ${key}`)

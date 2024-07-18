@@ -8,7 +8,7 @@
   ],
   "main": "./dist/index.js",
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "repository": {
     "type": "git",
@@ -37,10 +37,10 @@
     "test": "jest",
     "test:coverage": "npm run test -- --collectCoverage",
     "test:codecov": "codecov",
-    "cs:eslint:check": "eslint --ignore-path .gitignore '**/*.ts' -f codeframe",
-    "cs:eslint:fix": "npm run cs:eslint:check -- --fix",
-    "cs:prettier:check": "prettier --ignore-path .gitignore --check '**/*.{ts,js,json,md}'",
-    "cs:prettier:fix": "npm run cs:prettier:check -- --write '**/*.{ts,js,json,md}'",
+    "lint:check": "eslint --ignore-path .gitignore '**/*.ts' -f codeframe",
+    "lint:fix": "npm run lint:check -- --fix",
+    "prettier:check": "prettier --ignore-path .gitignore --check '**/*.{ts,js,json,md}'",
+    "prettier:fix": "npm run prettier:check -- --write '**/*.{ts,js,json,md}'",
     "prepare": "husky install",
     "docs": "typedoc --options typedoc.json src/lib/*.ts"
   },
@@ -48,7 +48,7 @@
     "jsonc-parser": "^3.1.0"
   },
   "devDependencies": {
-    "@ackee/styleguide-backend-config": "^0.3.2",
+    "@ackee/styleguide-backend-config": "^0.5.0",
     "@types/jest": "^28.1.4",
     "@types/node": "^18.0.3",
     "codecov": "^3.8.2",
