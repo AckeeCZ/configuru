@@ -6,6 +6,8 @@
 
 Manage the configuration of your Nodejs application with multiple environments and custom preferences, utilizing Configuru in CI and development as well!
 
+Improve the DX when managing the configuration files, get inline help and more with the [VS Code extension](https://github.com/AckeeCZ/configuru-extension).
+
 </div>
 
 ## Features
@@ -13,7 +15,7 @@ Manage the configuration of your Nodejs application with multiple environments a
 Configuru is a library for configuration management. Merge default project configuration with your user config, you can link yo your project. Atop of that, override your configuration with system environment variables.
 
 - :relieved: Tailored for multi-developer comfort
-- :sparkles: Cast and transforms inputs to correct type
+- :sparkles: Cast and transforms inputs to the correct type
 - :blue_heart: Typescript friendly
 - :muscle: Designed for multi-environment apps
 - :see_no_evil: Anonymized configuration for logger
