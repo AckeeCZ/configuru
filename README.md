@@ -40,6 +40,8 @@ npm install configuru
 
 3. _(optional)_ As a developer (or environment), create a custom override file (e.g. `~/.env/my-project.jsonc`) and save the path in your `CFG_JSON_PATH`.
 
+   Tip: Use inline secrets like `CFG_JSON_PATH='{"mysecret":"Sssshhh..."}'` or load from GCP Secret Manager: `CFG_JSON_PATH=$(gcloud secrets versions access latest --project=myproject --secret=mysecret)`
+
 4. Create a configuration module (e.g. `config.ts`)
 
 ```typescript
