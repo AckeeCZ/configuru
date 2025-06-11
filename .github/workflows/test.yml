@@ -28,6 +28,3 @@ jobs:
 
       - name: Run tests with coverage
         run: npm run test:coverage
-
-      - name: Run codecov
-        run: npm run test:codecov
