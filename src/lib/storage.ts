@@ -15,6 +15,14 @@ const fromPairs = (pairs: Array<[keyof any, any]>) =>
 const uniq = <T>(xs: T[]) => Array.from(new Set(xs))
 const { keys } = Object
 
+const loadInline = (secrets: string) => {
+  try {
+    return JSONC.parse(secrets)
+  } catch {
+    throw new Error('Invalid inline secrets')
+  }
+}
+
 const loadFile = (filePath?: string) => {
   if (!filePath) return {}
   const { dir, name } = parse(filePath)
@@ -40,14 +48,27 @@ const loadFile = (filePath?: string) => {
   }
 }
 
+const isInlineSecret = (
+  secretsOrFilename?: string
+): secretsOrFilename is string => {
+  return secretsOrFilename?.trim().startsWith('{') ?? false
+}
+
+const loadSecrets = (secretsOrFilename?: string) => {
+  if (isInlineSecret(secretsOrFilename)) {
+    return loadInline(secretsOrFilename)
+  }
+  return loadFile(secretsOrFilename)
+}
+
 export const createConfigStorage = (
   opts: Pick<
     ConfigLoaderOptions,
     'defaultConfigPath' | 'userConfigPath' | 'envMode'
   >
 ): Record<any, any> => {
-  const defaultConfig = loadFile(opts.defaultConfigPath)
-  const userConfig = loadFile(opts.userConfigPath)
+  const defaultConfig = loadSecrets(opts.defaultConfigPath)
+  const userConfig = loadSecrets(opts.userConfigPath)
   let envConfig: any = {}
   if (opts.envMode === 'default' || opts.envMode === 'merged') {
     const configKeys = [

@@ -98,4 +98,36 @@ describe('storage', () => {
                 }
             `)
   })
+  test('Default configuration can be inline', () => {
+    expect(
+      createConfigStorage({
+        defaultConfigPath: JSON.stringify({
+          inlinesecret: 'secret',
+        }),
+      })
+    ).toMatchInlineSnapshot(`
+      Object {
+        "inlinesecret": "secret",
+      }
+    `)
+  })
+  test('User configuration can be inline', () => {
+    expect(
+      createConfigStorage({
+        defaultConfigPath: resolve(__dirname, './sandbox/default.json'),
+        userConfigPath: JSON.stringify({
+          bar: 'inline',
+          inlinesecret: 'secret',
+        }),
+      })
+    ).toMatchInlineSnapshot(`
+      Object {
+        "bar": "inline",
+        "baz": 2,
+        "defaultConfig": true,
+        "foo": "default",
+        "inlinesecret": "secret",
+      }
+    `)
+  })
 })
