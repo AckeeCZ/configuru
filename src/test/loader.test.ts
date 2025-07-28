@@ -10,10 +10,11 @@ const config = {
 }
 
 const stringLoader = createAtomLoaderFactory(config)(x => String(x))
+const loaderJsonPath = './sandbox/loader.jsonc'
 
 describe('loader', () => {
   const { string, custom } = createLoader({
-    defaultConfigPath: resolve(__dirname, './sandbox/loader.jsonc'),
+    defaultConfigPath: resolve(__dirname, loaderJsonPath),
   })
   const schema = {
     foo: string('FOO'),
@@ -68,7 +69,7 @@ describe('loader', () => {
 
 describe('Loader exposes env var names', () => {
   const { string, custom } = createLoader({
-    defaultConfigPath: resolve(__dirname, './sandbox/loader.jsonc'),
+    defaultConfigPath: resolve(__dirname, loaderJsonPath),
   })
   const schema = {
     foo: string('FOO'),
@@ -86,7 +87,7 @@ describe('Loader exposes env var names', () => {
 
 describe('Loader exposes env var names at root level', () => {
   const { string, custom } = createLoader({
-    defaultConfigPath: resolve(__dirname, './sandbox/loader.jsonc'),
+    defaultConfigPath: resolve(__dirname, loaderJsonPath),
   })
 
   test('flat object', () => {

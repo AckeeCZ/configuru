@@ -38,7 +38,7 @@ type AnonymousValues<T> = T extends (...args: any[]) => any
     }
 
 const isLoadedValue = (x: any): x is LoadedValue<any, any, any> =>
-  Object.keys(x || {}).includes('__CONFIGURU_LEAF')
+  Object.keys(x ?? {}).includes('__CONFIGURU_LEAF')
 
 const mapConfig =
   (fn: (v: LoadedValue<any, any, any>) => any) =>

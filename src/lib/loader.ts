@@ -39,7 +39,7 @@ export const createAtomLoaderFactory = (storage: Record<any, any>) => {
       const safeTransform = (x: any) => {
         try {
           return transform(x)
-        } catch (_error) {
+        } catch {
           throw new Error(
             `Failed to transform value >${String(value)}< from key >${key}<`
           )
