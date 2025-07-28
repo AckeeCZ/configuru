@@ -47,7 +47,7 @@
     "jsonc-parser": "^3.1.0"
   },
   "devDependencies": {
-    "@ackee/styleguide-backend-config": "^0.5.0",
+    "@ackee/styleguide-backend-config": "^1.0.0",
     "@types/jest": "^28.1.4",
     "@types/node": "^18.0.3",
     "husky": "^8.0.1",
