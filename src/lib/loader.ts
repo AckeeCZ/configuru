@@ -16,8 +16,10 @@ const defaultOpts: ConfigLoaderOptions = {
 export interface LoadedValue<
   T,
   N extends boolean,
+  K extends string,
   R = N extends false ? T : T | null
 > {
+  key: K
   rawValue: any
   value: R
   hidden: boolean
@@ -27,12 +29,12 @@ export interface LoadedValue<
 
 export const createAtomLoaderFactory = (storage: Record<any, any>) => {
   const load =
-    <T, N extends boolean>(
+    <T, N extends boolean, K extends string>(
       transform: (x: any) => T,
       hidden: boolean,
       nullable: boolean
     ) =>
-    (key: string): LoadedValue<T, N> => {
+    <S extends K>(key: S): LoadedValue<T, N, S> => {
       const value = storage[key]
       const safeTransform = (x: any) => {
         try {
@@ -48,6 +50,7 @@ export const createAtomLoaderFactory = (storage: Record<any, any>) => {
         throw new Error(`Missing required value ${key}`)
       }
       return {
+        key,
         hidden,
         nullable,
         rawValue: value,
@@ -56,12 +59,12 @@ export const createAtomLoaderFactory = (storage: Record<any, any>) => {
       }
     }
   return <T>(transform: (x: any) => T) =>
-    Object.assign(load<T, false>(transform, false, false), {
-      hidden: Object.assign(load<T, false>(transform, true, false), {
-        nullable: load<T, true>(transform, true, true),
+    Object.assign(load<T, false, string>(transform, false, false), {
+      hidden: Object.assign(load<T, false, string>(transform, true, false), {
+        nullable: load<T, true, string>(transform, true, true),
       }),
-      nullable: Object.assign(load<T, true>(transform, false, true), {
-        hidden: load<T, true>(transform, true, true),
+      nullable: Object.assign(load<T, true, string>(transform, false, true), {
+        hidden: load<T, true, string>(transform, true, true),
       }),
     })
 }
