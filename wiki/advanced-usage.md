@@ -152,3 +152,32 @@ console.log(maskedValues(schema))
 //     }
 // ]
 ```
+
+### Exposed environment variables
+
+By default, every environment variable from `.env.jsonc` is exposed to the config object. You can access these variables even if you haven’t defined a config schema — or you can use both.
+
+```typescript
+// env.json
+// {
+//   "VARIABLE_ONE": "v1",
+//   "VARIABLE_TWO": "v2"
+// }
+const schema = {
+  vars: {
+    one: {
+      value: loader.string('VARIABLE_ONE'),
+    },
+    two: {
+      value: loader.string('VARIABLE_TWO'),
+    },
+  },
+}
+
+const config = values(schema)
+
+console.log(config.VARIABLE_ONE)
+console.log(config.VARIABLE_TWO)
+console.log(config.vars.one.value)
+console.log(config.vars.one.value)
+```

@@ -6,7 +6,7 @@ import { ConfigLoaderOptions } from './loader'
 const fileExistsSync = (path: string) => {
   try {
     return statSync(path).isFile()
-  } catch (_error) {
+  } catch {
     return false
   }
 }
@@ -41,7 +41,7 @@ const loadFile = (filePath?: string) => {
   }
   try {
     return JSONC.parse(readFileSync(resolvedPath, 'utf-8'))
-  } catch (_error) {
+  } catch {
     throw new Error(
       `Invalid config file in ${join(resolve('.'), resolvedPath)}`
     )

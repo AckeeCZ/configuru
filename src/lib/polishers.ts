@@ -1,56 +1,88 @@
-import { anonymize, isObject } from './helpers'
+import { anonymize, isObject, UnionToIntersection } from './helpers'
 import { LoadedValue } from './loader'
 
-type LoadedToValue<X> = X extends LoadedValue<any, any>
-  ? X['value'] extends Record<any, any>
-    ? Values<X['value']>
-    : X['value']
-  : X
+type ValueType<T> = T extends LoadedValue<infer V, any, any> ? V : T
 
-type Values<C> = C extends (...args: any[]) => any
-  ? C
-  : C extends Record<any, any>
+type SchemaValues<T> = T extends Record<any, any>
   ? {
-      [K in keyof C]: C[K] extends LoadedValue<any, any>
-        ? LoadedToValue<C[K]>
-        : Values<C[K]>
+      [K in keyof T]: T[K] extends LoadedValue<any, any, any>
+        ? ValueType<T[K]>
+        : SchemaValues<T[K]>
     }
-  : C
+  : T
 
-type AnonymousValues<C> = C extends (...args: any[]) => any
-  ? C
-  : C extends Record<any, any>
-  ? {
-      [K in keyof C]: C[K] extends LoadedValue<any, any>
+type EnvVars<T> = T extends LoadedValue<infer V, any, infer K>
+  ? { [P in K]: V }
+  : T extends Record<any, any>
+  ? UnionToIntersection<EnvVars<T[keyof T]>>
+  : never
+
+type Values<T> = T extends (...args: any[]) => any
+  ? T
+  : {
+      [K in
+        | keyof SchemaValues<T>
+        | keyof EnvVars<T>]: K extends keyof SchemaValues<T>
+        ? SchemaValues<T>[K]
+        : K extends keyof EnvVars<T>
+        ? EnvVars<T>[K]
+        : never
+    }
+
+type AnonymousValues<T> = T extends (...args: any[]) => any
+  ? T
+  : {
+      [K in keyof Values<T>]: Values<T>[K] extends string | number | boolean
         ? string
-        : AnonymousValues<C[K]>
+        : AnonymousValues<Values<T>[K]>
     }
-  : C
 
-const isLoadedValue = (x: any) =>
-  Object.keys(x || {}).includes('__CONFIGURU_LEAF')
+const isLoadedValue = (x: any): x is LoadedValue<any, any, any> =>
+  Object.keys(x ?? {}).includes('__CONFIGURU_LEAF')
 
 const mapConfig =
-  (fn: (v: LoadedValue<any, any>) => any) =>
+  (fn: (v: LoadedValue<any, any, any>) => any) =>
   (val: any): any => {
-    if (isLoadedValue(val)) {
-      return mapConfig(fn)(fn(val))
+    const rootEnvVars: Record<string, any> = {}
+
+    const extractEnvVars = (value: any) => {
+      if (isLoadedValue(value)) {
+        rootEnvVars[value.key] = value.value
+      } else if (Array.isArray(value)) {
+        value.forEach(extractEnvVars)
+      } else if (isObject(value)) {
+        Object.values(value).forEach(extractEnvVars)
+      }
     }
-    if (Array.isArray(val)) {
-      return val.map(mapConfig(fn))
+
+    const mapSchemaValue = (value: any): any => {
+      if (isLoadedValue(value)) {
+        const transformed = fn(value)
+        return isLoadedValue(transformed)
+          ? mapSchemaValue(transformed)
+          : transformed
+      }
+      if (Array.isArray(value)) {
+        return value.map(mapSchemaValue)
+      }
+      if (isObject(value)) {
+        const result: Record<string, any> = {}
+        for (const key of Object.keys(value)) {
+          result[key] = mapSchemaValue(value[key])
+        }
+        return result
+      }
+      return value
     }
-    if (isObject(val)) {
-      return Object.keys(val).reduce((res: any, key) => {
-        res[key] = mapConfig(fn)(val[key])
-        return res
-      }, {})
-    }
-    return val
+
+    extractEnvVars(val)
+    return { ...mapSchemaValue(val), ...rootEnvVars }
   }
 
 export const values = mapConfig(x => x.value) as <T extends Record<any, any>>(
   config: T
 ) => Values<T>
+
 export const maskedValues = mapConfig(x =>
   x.hidden ? anonymize(x.rawValue) : x.value
 ) as <T extends Record<any, any>>(config: T) => AnonymousValues<T>
