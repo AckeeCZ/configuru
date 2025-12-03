@@ -4,7 +4,9 @@
   "version": "1.1.0",
   "author": "Jaroslav Šmolík <grissius@gmail.com>",
   "contributors": [
-    "Jaroslav Šmolík <grissius@gmail.com>"
+    "Jaroslav Šmolík <grissius@gmail.com>",
+    "Pavel Švagr <s.pavel66@gmail.com>",
+    "Jiří Šmolík <smolikjirka@gmail.com>"
   ],
   "main": "./dist/index.js",
   "engines": {
