@@ -44,7 +44,6 @@
     "prettier:fix": "npm run prettier:check -- --write '**/*.{ts,js,json,md}'",
     "codestyle:check": "npm run lint:check -- && npm run prettier:check --",
     "codestyle:fix": "npm run lint:fix && npm run prettier:fix --",
-    "prepare": "husky install",
     "docs": "typedoc --options typedoc.json src/lib/*.ts"
   },
   "dependencies": {
