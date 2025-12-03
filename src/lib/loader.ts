@@ -1,4 +1,4 @@
-import { parseBool } from './helpers'
+import { anonymize, parseBool } from './helpers'
 import { createConfigStorage } from './storage'
 
 export interface ConfigLoaderOptions {
@@ -38,8 +38,9 @@ export const createAtomLoaderFactory = (storage: Record<any, any>) => {
         try {
           return transform(x)
         } catch (_error) {
+          const failedValue = hidden ? anonymize(value) : String(value)
           throw new Error(
-            `Failed to transform value >${String(value)}< from key >${key}<`
+            `Failed to transform value >${failedValue}< from key >${key}<`
           )
         }
       }

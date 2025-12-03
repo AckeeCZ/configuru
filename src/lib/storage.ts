@@ -1,5 +1,5 @@
 import { readFileSync, statSync } from 'fs'
-import { format, join, parse, resolve } from 'path'
+import path from 'path'
 import { JSONC } from './helpers'
 import { ConfigLoaderOptions } from './loader'
 
@@ -24,27 +24,28 @@ const loadInline = (secrets: string) => {
 }
 
 const loadFile = (filePath?: string) => {
-  if (!filePath) return {}
-  const { dir, name } = parse(filePath)
+  if (!filePath) {
+    return {}
+  }
+  const absoluteFilePath = path.resolve(filePath)
+  const { dir, name } = path.parse(absoluteFilePath)
   const testPaths = uniq([
-    filePath,
-    format({ dir, name, ext: '.json' }),
-    format({ dir, name, ext: '.jsonc' }),
+    absoluteFilePath,
+    path.format({ dir, name, ext: '.json' }),
+    path.format({ dir, name, ext: '.jsonc' }),
   ])
   const resolvedPath = testPaths.find(fileExistsSync)
   if (!resolvedPath) {
     throw new Error(
-      `File path set, but none of the following tested derivations exist:\n${testPaths
-        .map(p => ` - ${join(resolve('.'), p)}`)
-        .join('\n')}`
+      `File path set, but none of the following tested derivations exist:\n${testPaths.join(
+        '\n'
+      )}`
     )
   }
   try {
     return JSONC.parse(readFileSync(resolvedPath, 'utf-8'))
   } catch (_error) {
-    throw new Error(
-      `Invalid config file in ${join(resolve('.'), resolvedPath)}`
-    )
+    throw new Error(`Invalid config file in ${resolvedPath}\n`)
   }
 }
 
@@ -54,11 +55,11 @@ const isInlineSecret = (
   return secretsOrFilename?.trim().startsWith('{') ?? false
 }
 
-const loadSecrets = (secretsOrFilename?: string) => {
-  if (isInlineSecret(secretsOrFilename)) {
-    return loadInline(secretsOrFilename)
+const loadSecrets = (secretsOrPath?: string) => {
+  if (isInlineSecret(secretsOrPath)) {
+    return loadInline(secretsOrPath)
   }
-  return loadFile(secretsOrFilename)
+  return loadFile(secretsOrPath)
 }
 
 export const createConfigStorage = (

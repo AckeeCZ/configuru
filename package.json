@@ -4,7 +4,9 @@
   "version": "1.1.0",
   "author": "Jaroslav Šmolík <grissius@gmail.com>",
   "contributors": [
-    "Jaroslav Šmolík <grissius@gmail.com>"
+    "Jaroslav Šmolík <grissius@gmail.com>",
+    "Pavel Švagr <s.pavel66@gmail.com>",
+    "Jiří Šmolík <smolikjirka@gmail.com>"
   ],
   "main": "./dist/index.js",
   "engines": {
@@ -40,6 +42,8 @@
     "lint:fix": "npm run lint:check -- --fix",
     "prettier:check": "prettier --ignore-path .gitignore --check '**/*.{ts,js,json,md}'",
     "prettier:fix": "npm run prettier:check -- --write '**/*.{ts,js,json,md}'",
+    "codestyle:check": "npm run lint:check -- && npm run prettier:check --",
+    "codestyle:fix": "npm run lint:fix && npm run prettier:fix --",
     "prepare": "husky install",
     "docs": "typedoc --options typedoc.json src/lib/*.ts"
   },
@@ -47,12 +51,10 @@
     "jsonc-parser": "^3.1.0"
   },
   "devDependencies": {
-    "@ackee/styleguide-backend-config": "^0.5.0",
+    "@ackee/styleguide-backend-config": "^1.0.1",
     "@types/jest": "^28.1.4",
     "@types/node": "^20.0.0",
-    "husky": "^8.0.1",
     "jest": "^28.1.2",
-    "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
     "ts-jest": "^28.0.5",
     "typedoc": "^0.25.4",
