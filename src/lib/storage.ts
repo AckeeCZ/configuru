@@ -45,7 +45,7 @@ const loadFile = (filePath?: string) => {
   try {
     return JSONC.parse(readFileSync(resolvedPath, 'utf-8'))
   } catch (_error) {
-    throw new Error(`Invalid config file in ${resolvedPath}`)
+    throw new Error(`Invalid config file in ${resolvedPath}\n`)
   }
 }
 

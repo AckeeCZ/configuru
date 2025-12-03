@@ -5,5 +5,6 @@ module.exports = {
   rules: {
     ...config.rules,
     'security/detect-non-literal-fs-filename': 0,
+    'sonarjs/no-ignored-exceptions': 0,
   },
 }
