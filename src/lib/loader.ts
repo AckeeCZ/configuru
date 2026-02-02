@@ -1,4 +1,6 @@
-import { anonymize, parseBool } from './helpers'
+import { traverseObject, anonymize, isObject } from './helpers'
+import { createPolishFunctions, Values, AnonymousValues } from './polishers'
+import { isValueDefinition, SchemaDef, ValueDefinition } from './schema'
 import { createConfigStorage } from './storage'
 
 export interface ConfigLoaderOptions {
@@ -18,64 +20,121 @@ export interface LoadedValue<
   N extends boolean,
   R = N extends false ? T : T | null
 > {
+  key?: string
   rawValue: any
   value: R
   hidden: boolean
   nullable: boolean
-  __CONFIGURU_LEAF: true
+  __CONFIGURU_LEAF_LOADED: true
 }
 
-export const createAtomLoaderFactory = (storage: Record<any, any>) => {
-  const load =
-    <T, N extends boolean>(
-      transform: (x: any) => T,
-      hidden: boolean,
-      nullable: boolean
-    ) =>
-    (key: string): LoadedValue<T, N> => {
+type TransformSchemaDef<T> = T extends ValueDefinition<infer V>
+  ? LoadedValue<V, T['nullable'] extends true ? true : false>
+  : T extends Array<infer U>
+  ? Array<TransformSchemaDef<U>>
+  : T extends Record<string, any>
+  ? T extends ValueDefinition<any>
+    ? T
+    : {
+        [K in keyof T]: TransformSchemaDef<T[K]>
+      }
+  : T
+
+const mapSchemaDef = traverseObject(isValueDefinition)
+
+type LoaderResult<S extends SchemaDef> = {
+  values: () => Values<TransformSchemaDef<S>>
+  maskedValues: () => AnonymousValues<TransformSchemaDef<S>>
+}
+
+type LoaderFn = <S extends SchemaDef>(schema: S) => LoaderResult<S>
+
+const createLoadFn =
+  (opts: ConfigLoaderOptions): LoaderFn =>
+  <S extends SchemaDef>(schema: S) => {
+    const storage = createConfigStorage(opts)
+
+    // Helper function to load a single value definition
+    const loadValueDefinition = (
+      def: ValueDefinition<any>,
+      configKey?: string
+    ): LoadedValue<any, any> => {
+      const key = def.key ?? configKey
+      if (key === undefined) {
+        throw new Error(
+          `Missing key for value definition ${JSON.stringify(
+            def
+          )}. Your config schema needs to be an object { key: <schema definition> }`
+        )
+      }
       const value = storage[key]
+
       const safeTransform = (x: any) => {
         try {
-          return transform(x)
+          return def.transform(x)
         } catch (_error) {
-          const failedValue = hidden ? anonymize(value) : String(value)
+          const failedValue = def.hidden ? anonymize(value) : String(value)
           throw new Error(
             `Failed to transform value >${failedValue}< from key >${key}<`
           )
         }
       }
+
       const missing = value === undefined || value === null
-      if (!nullable && missing) {
+      if (!def.nullable && missing) {
         throw new Error(`Missing required value ${key}`)
       }
+
+      const transformedValue = missing ? null : safeTransform(value)
+
+      const processNestedSchemas = (val: any): any => {
+        if (val === null || val === undefined || typeof val !== 'object') {
+          return val
+        }
+        if (isValueDefinition(val)) {
+          return loadValueDefinition(val).value
+        }
+        if (Array.isArray(val)) {
+          return val.map(processNestedSchemas)
+        }
+        if (isObject(val)) {
+          const result: Record<string, any> = {}
+          for (const k of Object.keys(val)) {
+            result[k] = processNestedSchemas(val[k])
+          }
+          return result
+        }
+        return val
+      }
+
+      const processedValue = def.isCustom
+        ? processNestedSchemas(transformedValue)
+        : transformedValue
+
       return {
-        hidden,
-        nullable,
+        key,
         rawValue: value,
-        value: missing ? null : (safeTransform(value) as any),
-        __CONFIGURU_LEAF: true,
+        nullable: def.nullable ?? false,
+        hidden: def.hidden ?? false,
+        value: processedValue as any,
+        __CONFIGURU_LEAF_LOADED: true,
       }
     }
-  return <T>(transform: (x: any) => T) =>
-    Object.assign(load<T, false>(transform, false, false), {
-      hidden: Object.assign(load<T, false>(transform, true, false), {
-        nullable: load<T, true>(transform, true, true),
-      }),
-      nullable: Object.assign(load<T, true>(transform, false, true), {
-        hidden: load<T, true>(transform, true, true),
-      }),
-    })
-}
 
-export const createLoader = (opts: ConfigLoaderOptions = defaultOpts) => {
-  opts = { ...defaultOpts, ...opts }
-  const configStorage = createConfigStorage(opts)
-  const atomLoader = createAtomLoaderFactory(configStorage)
-  return {
-    number: atomLoader(Number),
-    string: atomLoader(String),
-    bool: atomLoader(parseBool),
-    json: atomLoader(JSON.parse),
-    custom: <T>(fn: (x: any) => T) => atomLoader(fn),
+    const load = mapSchemaDef((def, configKey) =>
+      loadValueDefinition(def, configKey)
+    )
+
+    const config: TransformSchemaDef<S> = load(schema)
+
+    return {
+      ...createPolishFunctions(config),
+    }
   }
+
+export const createLoader = (
+  opts: ConfigLoaderOptions = defaultOpts
+): LoaderFn => {
+  opts = { ...defaultOpts, ...opts }
+  return createLoadFn(opts)
 }

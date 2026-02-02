@@ -45,19 +45,20 @@ npm install configuru
 4. Create a configuration module (e.g. `config.ts`)
 
 ```typescript
-import { createLoader, values } from 'configuru'
+import { createLoader, schema } from 'configuru'
 
 // create loader that cascades overrides and creates a config storage
 const loader = createLoader()
-
-// Pass configuration schema to `values` transformer to get configuration
-export default values({
+// Pass configuration structure to loader transformer to get configuration schema
+const config = loader({
   server: {
-    // use loader accessors, place them in custom structure
+    // use schema definition, place them in custom structure
     // loader parses correct type from store
-    port: loader.number('SERVER_PORT'),
+    port: schema.number('SERVER_PORT'),
   },
 })
+// Use loaded values
+export default config.values()
 ```
 
 5. Use your configuration params throughout your app

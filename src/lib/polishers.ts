@@ -1,4 +1,4 @@
-import { anonymize, isObject } from './helpers'
+import { anonymize, traverseObject } from './helpers'
 import { LoadedValue } from './loader'
 
 type LoadedToValue<X> = X extends LoadedValue<any, any>
@@ -7,7 +7,7 @@ type LoadedToValue<X> = X extends LoadedValue<any, any>
     : X['value']
   : X
 
-type Values<C> = C extends (...args: any[]) => any
+export type Values<C> = C extends (...args: any[]) => any
   ? C
   : C extends Record<any, any>
   ? {
@@ -17,7 +17,7 @@ type Values<C> = C extends (...args: any[]) => any
     }
   : C
 
-type AnonymousValues<C> = C extends (...args: any[]) => any
+export type AnonymousValues<C> = C extends (...args: any[]) => any
   ? C
   : C extends Record<any, any>
   ? {
@@ -27,30 +27,24 @@ type AnonymousValues<C> = C extends (...args: any[]) => any
     }
   : C
 
-const isLoadedValue = (x: any) =>
-  Object.keys(x ?? {}).includes('__CONFIGURU_LEAF')
+const isLoadedValue = (x: any): x is LoadedValue<any, any, any> => {
+  const keys = Object.keys(x ?? {})
+  return keys.includes('__CONFIGURU_LEAF_LOADED')
+}
 
-const mapConfig =
-  (fn: (v: LoadedValue<any, any>) => any) =>
-  (val: any): any => {
-    if (isLoadedValue(val)) {
-      return mapConfig(fn)(fn(val))
-    }
-    if (Array.isArray(val)) {
-      return val.map(mapConfig(fn))
-    }
-    if (isObject(val)) {
-      return Object.keys(val).reduce((res: any, key) => {
-        res[key] = mapConfig(fn)(val[key])
-        return res
-      }, {})
-    }
-    return val
-  }
+const mapLoadedConfig = traverseObject(isLoadedValue)
 
-export const values = mapConfig(x => x.value) as <T extends Record<any, any>>(
+const values = mapLoadedConfig(x => x.value) as <T extends Record<any, any>>(
   config: T
 ) => Values<T>
-export const maskedValues = mapConfig(x =>
+
+const maskedValues = mapLoadedConfig(x =>
   x.hidden ? anonymize(x.rawValue) : x.value
 ) as <T extends Record<any, any>>(config: T) => AnonymousValues<T>
+
+export const createPolishFunctions = <T extends Record<any, any>>(
+  config: T
+) => ({
+  values: () => values(config),
+  maskedValues: () => maskedValues(config),
+})
