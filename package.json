@@ -1,7 +1,7 @@
 {
   "name": "configuru",
   "description": "Manage the configuration of your Nodejs application with multiple environments and custom preferences, utilizing Configuru in CI and development as well!",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "author": "Jaroslav Šmolík <grissius@gmail.com>",
   "contributors": [
     "Jaroslav Šmolík <grissius@gmail.com>",
