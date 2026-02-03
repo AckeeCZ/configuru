@@ -5,12 +5,43 @@
 Sometimes it makes sense to have a static parameter in configuration. For example, when connecting to third party service, you want to have api key configurable per environment, but connection options not. You can insert in your configuration schema constant values of any type without loader and use Configuru for application parameters as well.
 
 ```typescript
-const configSchema = {
-  configurable: loader.string('KEY'),
+import { createLoader, schema } from 'configuru'
+const loader = createLoader()
+
+const configSchema = loader({
+  configurable: schema.string('KEY'),
   static: 'foo',
-}
+})
 // { configurable: <loaded value>, static: 'foo' }
-const { configurable, static } = values(configSchema)
+const { configurable, static } = loader.values()
+```
+
+### Default variable names
+
+You don't need to provide variable name to schema if you named the config key same as the key in the configuration.
+This can be helpful if you drive your whole config file only by environment variables.
+
+> ⚠️ For nested config keys, the last object key is used for the variable name
+
+```typescript
+import { createLoader, schema } from 'configuru'
+const loader = createLoader()
+
+const configSchema = loader({
+  SERVER_PORT: schema.string(), // Loads from SERVER_PORT env var
+  SQL_CONNECTION_STRING: schema.string(), // Loaded from SQL_CONNECTION_STRING env var
+  apiKey: schema.string(), // ⚠️ Loaded from apiKey env var
+  api: {
+    apiKey: schema.string(), // ⚠️ Loaded from apiKey env var
+    key: schema.string('apiKey'), // ⚠️ Loaded from apiKey env var
+  },
+})
+const {
+  SERVER_PORT,
+  SQL_CONNECTION_STRING,
+  apiKey,
+  api: { apiKey, key },
+} = loader.values()
 ```
 
 ### Hidden variables, secrets and logging
@@ -18,23 +49,23 @@ const { configurable, static } = values(configSchema)
 `config.ts`
 
 ```typescript
-import { createLoader, values, maskedValues } from 'configuru'
+import { createLoader, schema } from 'configuru'
 const loader = createLoader()
 
 // create `buildConfig` function, we will use two loaders
-const configSchema = {
+const configSchema = loader({
   // add hidden flag
-  apiKey: loader.string.hidden('SECRET_KEY'),
-}
+  apiKey: schema.string.hidden('SECRET_KEY'),
+})
 
-export default values(configSchema)
-export const maskedConfig = maskedValues(configSchema)
+export default configSchema.values()
+export const maskedConfig = configSchema.maskedValues()
 ```
 
 `foo.ts`
 
 ```typescript
-import config, { maskedValues } from './config'
+import config, { maskedConfig } from './config'
 
 // use in your app, never log
 config.apiKey // szvor4VYgS79z3QSBtmN0dJeyXbg1Xip
@@ -76,9 +107,9 @@ const createLogger = (opts: { defaultLevel: Level }) => {
   /*...*/
 }
 
-const config1 = values({
+const config1 = loader({
   defaultLevel: loader.string('LOGGER_DEFAULT_LEVEL'),
-}) // type -> { defaultLevel: string }
+}).values() // type -> { defaultLevel: string }
 
 createLogger(config1) // error: string not assignable to Level
 ```
@@ -87,7 +118,7 @@ To solve it, you can create a custom loader
 
 ```typescript
 // create custom loader
-const levelLoader = loader.custom(x => {
+const levelLoader = schema.custom(x => {
   let level: Level = 'unknown'
   if (x === 'info' || x === 'warn') {
     level = x
@@ -95,11 +126,11 @@ const levelLoader = loader.custom(x => {
   return level
 })
 // or just
-const optimisticLevelLoader = loader.custom(x => x as Level)
+const optimisticLevelLoader = schema.custom(x => x as Level)
 
-const config2 = values({
+const config2 = loader({
   defaultLevel: levelLoader('LOGGER_DEFAULT_LEVEL'),
-}) // type -> { defaultLevel: Level }
+}).values() // type -> { defaultLevel: Level }
 
 createLogger(config2) // OK
 ```
@@ -110,14 +141,14 @@ Default loaders not enough? You can use custom loaders to create any transformat
 
 ```typescript
 // 'PHOTO-2019-04-01' => { type: 'PHOTO', date: Date }
-const stampLoader = loader.custom(x => {
+const stampLoader = schema.custom(x => {
   const [type, y, m, d] = x.split('-')
   return { type, date: new Date(y, m, d) }
 })
 
-const config = values({
+const config = loader({
   stamp: stampLoader('STAMP'),
-}) // type -> { stamp: { type: any, date: Date } };
+}).values() // type -> { stamp: { type: any, date: Date } };
 ```
 
 Custom loaders can also return an object that contains nested loaders. Meaning you can have a custom loader that
@@ -131,16 +162,16 @@ This can be particularly useful for arrays of connection strings that may contai
 //   "PASSWORD": "pwd",
 //   "HOSTS": "host1,host2"
 // }
-const schema = {
-  connections: loader.custom(x => {
+const configSchema = loader({
+  connections: schema.custom(x => {
     return x.split(',').map(host => ({
       host,
-      password: loader.string.hidden('PASSWORD'),
+      password: schema.string.hidden('PASSWORD'),
     }))
   })('HOSTS'),
-}
+})
 
-console.log(maskedValues(schema))
+console.log(configSchema.maskedValues())
 // [
 //     {
 //         "host": "host1",

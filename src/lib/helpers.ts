@@ -24,3 +24,32 @@ export const JSONC = {
     return parsed
   },
 }
+
+export const traverseObject =
+  <Leaf>(isLeaf: (v: any) => v is Leaf) =>
+  (fn: (v: Leaf, key?: string) => any) =>
+  (val: any): any => {
+    const mapSchemaValue = (value: any, key?: string): any => {
+      if (isLeaf(value)) {
+        const transformed = fn(value, key)
+        return isLeaf(transformed)
+          ? mapSchemaValue(transformed, key)
+          : transformed
+      }
+      if (Array.isArray(value)) {
+        // eslint-disable-next-line sonarjs/no-nested-functions
+        return value.map((val, index) =>
+          mapSchemaValue(val, key ? `${key}[${index}]` : undefined)
+        )
+      }
+      if (isObject(value)) {
+        const result: Record<string, any> = {}
+        for (const key of Object.keys(value)) {
+          result[key] = mapSchemaValue(value[key], key)
+        }
+        return result
+      }
+      return value
+    }
+    return { ...mapSchemaValue(val) }
+  }

@@ -1,121 +1,125 @@
 import { resolve } from 'path'
-import { createAtomLoaderFactory, createLoader } from '../lib/loader'
-import { values } from '../lib/polishers'
+import { createLoader } from '../lib/loader'
+import { schema, SchemaDef } from '../lib/schema'
 
-const config = {
-  string: 'string',
-  number: 42,
-  boolean: false,
-  null: null,
-}
-
-const stringLoader = createAtomLoaderFactory(config)(x => String(x))
+const loaderJsonPath = './sandbox/loader.jsonc'
+const baseConfig = './sandbox/base.jsonc'
 
 describe('loader', () => {
-  const { string, custom } = createLoader({
-    defaultConfigPath: resolve(__dirname, './sandbox/loader.jsonc'),
+  const loadConfig = createLoader({
+    defaultConfigPath: resolve(__dirname, loaderJsonPath),
   })
-  const schema = {
-    foo: string('FOO'),
-    stamp: custom((foo: string) => `${foo}bar`)('FOO'),
-    expanded: custom(x => {
-      return x
-        .split('')
-        .map((letter: string) => ({ s: letter, foo: string('FOO') }))
+  const config = loadConfig({
+    foo: schema.string('FOO'),
+    stamp: schema.custom((foo: string) => `${foo}bar`)('FOO'),
+    expanded: schema.custom(x => {
+      return x.split('').map((letter: string) => ({
+        s: letter,
+        foo: schema.string('FOO'),
+      }))
     })('FOO'),
-  }
-  const { foo, stamp, expanded } = values(schema)
+  }).values()
+  const { foo, stamp, expanded } = config
   expect(foo).toMatchInlineSnapshot('"foo"')
   expect(stamp).toMatchInlineSnapshot('"foobar"')
   expect(expanded).toMatchInlineSnapshot(`
-        Array [
-          Object {
-            "foo": "foo",
-            "s": "f",
-          },
-          Object {
-            "foo": "foo",
-            "s": "o",
-          },
-          Object {
-            "foo": "foo",
-            "s": "o",
-          },
-        ]
-    `)
+    Array [
+      Object {
+        "foo": "foo",
+        "s": "f",
+      },
+      Object {
+        "foo": "foo",
+        "s": "o",
+      },
+      Object {
+        "foo": "foo",
+        "s": "o",
+      },
+    ]
+  `)
 })
 
-describe('atomLoader', () => {
+describe('Loader exposes env var names', () => {
+  const loader = createLoader({
+    defaultConfigPath: resolve(__dirname, loaderJsonPath),
+  })
+  const config = loader({
+    foo: schema.string('FOO'),
+    stamp: schema.custom((foo: string) => `${foo}bar`)('STAMP'),
+  }).values()
+
+  expect(config).toMatchInlineSnapshot(`
+    Object {
+      "foo": "foo",
+      "stamp": "PHOTO-2019-04-01bar",
+    }
+  `)
+})
+
+describe('simple loads', () => {
+  const loader = createLoader({
+    defaultConfigPath: resolve(__dirname, baseConfig),
+  })
+
+  const load = <T extends SchemaDef>(schema: T) => loader(schema).maskedValues()
+
   describe('string loader', () => {
     test('number', () => {
-      expect(stringLoader('number')).toMatchInlineSnapshot(`
-                Object {
-                  "__CONFIGURU_LEAF": true,
-                  "hidden": false,
-                  "nullable": false,
-                  "rawValue": 42,
-                  "value": "42",
-                }
-            `)
+      expect(schema.number('number')).toMatchInlineSnapshot(`
+        Object {
+          "__CONFIGURU_LEAF": true,
+          "hidden": false,
+          "isCustom": false,
+          "key": "number",
+          "nullable": false,
+          "transform": [Function],
+        }
+      `)
     })
     test('nullable', () => {
       // empty throws on default
-      expect(() => stringLoader('null')).toThrow(/missing/i)
-      expect(() => stringLoader('undefined')).toThrow(/missing/i)
+      expect(() => load({ null: schema.string() })).toThrow(/missing/i)
+      expect(() => load({ undefined: schema.string() })).toThrow(/missing/i)
       // empty valid on nullable
-      expect(stringLoader.nullable('null')).toMatchInlineSnapshot(`
-                Object {
-                  "__CONFIGURU_LEAF": true,
-                  "hidden": false,
-                  "nullable": true,
-                  "rawValue": null,
-                  "value": null,
-                }
-            `)
-      expect(stringLoader.nullable('undefined')).toMatchInlineSnapshot(`
-                Object {
-                  "__CONFIGURU_LEAF": true,
-                  "hidden": false,
-                  "nullable": true,
-                  "rawValue": undefined,
-                  "value": null,
-                }
-            `)
+      expect(load({ null: schema.string.nullable() })).toMatchInlineSnapshot(`
+        Object {
+          "null": null,
+        }
+      `)
+      expect(load({ undefined: schema.string.nullable() }))
+        .toMatchInlineSnapshot(`
+        Object {
+          "undefined": null,
+        }
+      `)
     })
     test('nullable & hidden', () => {
       // empty throws on hidden
-      expect(() => stringLoader.hidden('null')).toThrow(/missing/i)
-      expect(() => stringLoader.hidden('undefined')).toThrow(/missing/i)
+      expect(() => load({ null: schema.string.hidden() })).toThrow(/missing/i)
+      expect(() => load({ undefined: schema.string.hidden() })).toThrow(
+        /missing/i
+      )
       // empty valid on nullable
-      expect(stringLoader.hidden.nullable('null')).toMatchInlineSnapshot(`
-                Object {
-                  "__CONFIGURU_LEAF": true,
-                  "hidden": true,
-                  "nullable": true,
-                  "rawValue": null,
-                  "value": null,
-                }
-            `)
-      expect(stringLoader.hidden.nullable('undefined')).toMatchInlineSnapshot(`
-                Object {
-                  "__CONFIGURU_LEAF": true,
-                  "hidden": true,
-                  "nullable": true,
-                  "rawValue": undefined,
-                  "value": null,
-                }
-            `)
+      expect(load({ null: schema.string.hidden.nullable() }))
+        .toMatchInlineSnapshot(`
+        Object {
+          "null": "[redacted]",
+        }
+      `)
+      expect(load({ undefined: schema.string.hidden.nullable() }))
+        .toMatchInlineSnapshot(`
+        Object {
+          "undefined": "[redacted]",
+        }
+      `)
     })
     test('hidden', () => {
-      expect(stringLoader.hidden('string')).toMatchInlineSnapshot(`
-                Object {
-                  "__CONFIGURU_LEAF": true,
-                  "hidden": true,
-                  "nullable": false,
-                  "rawValue": "string",
-                  "value": "string",
-                }
-            `)
+      expect(load({ string: schema.string.hidden() })).toMatchInlineSnapshot(`
+        Object {
+          "string": "[redacted]",
+        }
+      `)
     })
   })
 })

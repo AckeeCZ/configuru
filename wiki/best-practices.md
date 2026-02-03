@@ -6,6 +6,7 @@
 - Keep your configuration interface **minimal**. If you don't need to configure parameter for different environments, use constant parameter without loader.
 - Even though you can use plain `JSON` for config values, **prefer `JSONc`** and add comments to your variables.
 - **Keep your `.env.jsonc` well structured and well documented**. Setting up the configuration should not require thorough prior knowledge of the implementation.
+- For simple flat applications without modularization, use flat config structure with automatic parameter names
 
 ### When to use placeholder, when default value?
 
