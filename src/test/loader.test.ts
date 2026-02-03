@@ -122,4 +122,38 @@ describe('simple loads', () => {
       `)
     })
   })
+  describe('reload', () => {
+    let oldString: string | undefined
+    beforeAll(() => {
+      oldString = process.env.string
+    })
+    afterEach(() => {
+      if (oldString) {
+        process.env.string = oldString
+      } else {
+        delete process.env.string
+      }
+    })
+    test('reload', () => {
+      const config = loader({ string: schema.string.hidden() })
+      process.env.string = 'string_changed'
+
+      expect(config.values()).toMatchInlineSnapshot(`
+        Object {
+          "string": "string",
+        }
+      `)
+
+      expect(config.reload().values()).toMatchInlineSnapshot(`
+        Object {
+          "string": "string_changed",
+        }
+      `)
+      expect(config.reload().maskedValues()).toMatchInlineSnapshot(`
+        Object {
+          "string": "[redacted]",
+        }
+      `)
+    })
+  })
 })

@@ -45,6 +45,7 @@ const mapSchemaDef = traverseObject(isValueDefinition)
 type LoaderResult<S extends SchemaDef> = {
   values: () => Values<TransformSchemaDef<S>>
   maskedValues: () => AnonymousValues<TransformSchemaDef<S>>
+  reload: () => LoaderResult<S>
 }
 
 type LoaderFn = <S extends SchemaDef>(schema: S) => LoaderResult<S>
@@ -129,6 +130,7 @@ const createLoadFn =
 
     return {
       ...createPolishFunctions(config),
+      reload: () => createLoadFn(opts)(schema),
     }
   }
 

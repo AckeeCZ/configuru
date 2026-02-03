@@ -44,6 +44,26 @@ const {
 } = loader.values()
 ```
 
+### Reloading the config
+
+If you are working in an environment that is able to change the configuration during runtime, `reload`
+function can be helpful to load a new configuration based on same settings and schema as the previous one.
+
+```typescript
+import { createLoader, schema } from 'configuru'
+const loader = createLoader()
+
+const configSchema = loader({
+  canChange: schema.string('CHANGEABLE'),
+})
+
+const { canChange } = configSchema.values() // old value
+
+// value changed in config file or env variables during runtime
+
+const { canChange } = configSchema.reload().values() // new value
+```
+
 ### Hidden variables, secrets and logging
 
 `config.ts`

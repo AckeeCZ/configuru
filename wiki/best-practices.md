@@ -37,3 +37,5 @@ Examples:
 1. If you find your configuration file harder to navigate through, use sections seperated by a newline with a comment
 2. If name is not self-explanatory, use brief comment to explain how is the value interpreted
 3. Do not include tautological comments (`"SERVER_PORT": 3000, // server port`)
+
+- Even though you can use plain `JSON` for config values, **prefer `JSONc`** and add comments to your variables.
