@@ -9,9 +9,22 @@ export interface ConfigLoaderOptions {
   envMode?: 'all' | 'default' | 'merged' | 'none'
 }
 
+const resolveUserConfigPath = () => {
+  if (process.env.CONFIGURU_CONFIG) {
+    return process.env.CONFIGURU_CONFIG
+  }
+  if (process.env.CFG_JSON_PATH) {
+    console.warn(
+      'Configuru: CFG_JSON_PATH is deprecated, use CONFIGURU_CONFIG instead. It will be removed in the next major version.'
+    )
+    return process.env.CFG_JSON_PATH
+  }
+  return undefined
+}
+
 const defaultOpts: ConfigLoaderOptions = {
   defaultConfigPath: '.env',
-  userConfigPath: process.env.CFG_JSON_PATH,
+  userConfigPath: resolveUserConfigPath(),
   envMode: 'default',
 }
 
