@@ -100,13 +100,13 @@ maskedConfig.apiKey // [redacted]
 import { createLoader } from 'configuru'
 const loader = createLoader({
   defaultConfigPath: 'default-config', // defaults to ".env"
-  userConfigPath: process.env.USER_CONFIG, // defaults to process.env.CFG_JSON_PATH
+  userConfigPath: process.env.USER_CONFIG, // defaults to process.env.CONFIGURU_CONFIG
   envMode: 'all', // defaults to "default"
 })
 ```
 
 1. `defaultConfigPath`: Where to look for your default config JSON file (provide null to skip)
-2. `userConfigPath`: Where to look for your user config JSON file (provide null to skip)
+2. `userConfigPath`: Where to look for your user config JSON file. Defaults to `process.env.CONFIGURU_CONFIG`, falling back to `process.env.CFG_JSON_PATH` (deprecated). Provide null to skip
 3. `envMode`: How to handle process.env variables
    1. `all` - Load (override) all vars available in process.env to the store
    2. `default` - Load (override) only vars with keys from default config
