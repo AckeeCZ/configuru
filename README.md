@@ -39,9 +39,11 @@ npm install configuru
 }
 ```
 
-3. _(optional)_ As a developer (or environment), create a custom override file (e.g. `~/.env/my-project.jsonc`) and save the path in your `CFG_JSON_PATH`.
+3. _(optional)_ As a developer (or environment), create a custom override file (e.g. `~/.env/my-project.jsonc`) and save the path in your `CONFIGURU_CONFIG`.
 
-   Tip: Use inline secrets like `CFG_JSON_PATH='{"mysecret":"Sssshhh..."}'` or load from GCP Secret Manager: `CFG_JSON_PATH=$(gcloud secrets versions access latest --project=myproject --secret=mysecret)`
+   Tip: Use inline secrets like `CONFIGURU_CONFIG='{"mysecret":"Sssshhh..."}'` or load from GCP Secret Manager: `CONFIGURU_CONFIG=$(gcloud secrets versions access latest --project=myproject --secret=mysecret)`
+
+   **Note:** The legacy `CFG_JSON_PATH` variable is still supported but deprecated and will be removed in the next major version.
 
 4. Create a configuration module (e.g. `config.ts`)
 
