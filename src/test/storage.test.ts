@@ -78,16 +78,33 @@ describe('storage', () => {
             }
         `)
   })
-  test('Default & user & env', () => {
-    process.env.foo = 'env'
-    process.env.bar = '3'
-    expect(
+  describe('env overrides', () => {
+    const envKeys = ['foo', 'bar', 'quix', 'unknown']
+    const originalEnv: Record<string, string | undefined> = {}
+    beforeEach(() => {
+      for (const key of envKeys) {
+        originalEnv[key] = process.env[key]
+      }
+    })
+    afterEach(() => {
+      for (const key of envKeys) {
+        if (originalEnv[key] === undefined) {
+          delete process.env[key]
+        } else {
+          process.env[key] = originalEnv[key]
+        }
+      }
+    })
+    const storage = () =>
       createConfigStorage({
         defaultConfigPath: resolve(__dirname, './sandbox/default.json'),
         userConfigPath: resolve(__dirname, './sandbox/user.json'),
-        envMode: 'default',
       })
-    ).toMatchInlineSnapshot(`
+
+    test('Default & user & env', () => {
+      process.env.foo = 'env'
+      process.env.bar = '3'
+      expect(storage()).toMatchInlineSnapshot(`
                 Object {
                   "bar": "3",
                   "baz": 2,
@@ -97,6 +114,15 @@ describe('storage', () => {
                   "userConfig": true,
                 }
             `)
+    })
+    test('Env is ignored for keys only in user config', () => {
+      process.env.quix = 'env'
+      expect(storage().quix).toBe(false)
+    })
+    test('Env is ignored for keys in neither config', () => {
+      process.env.unknown = 'env'
+      expect(storage()).not.toHaveProperty('unknown')
+    })
   })
   test('Default configuration can be inline', () => {
     expect(

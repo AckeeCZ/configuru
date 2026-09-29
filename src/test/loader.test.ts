@@ -158,6 +158,30 @@ describe('simple loads', () => {
   })
 })
 
+describe('Env overrides', () => {
+  let oldValue: string | undefined
+  beforeAll(() => {
+    oldValue = process.env.NOT_IN_DEFAULT
+  })
+  afterEach(() => {
+    if (oldValue === undefined) {
+      delete process.env.NOT_IN_DEFAULT
+    } else {
+      process.env.NOT_IN_DEFAULT = oldValue
+    }
+  })
+  test('schema key missing from default config is not read from env', () => {
+    process.env.NOT_IN_DEFAULT = 'env'
+    const loader = createLoader({
+      defaultConfigPath: resolve(__dirname, loaderJsonPath),
+    })
+    const config = loader({
+      notInDefault: schema.string.nullable('NOT_IN_DEFAULT'),
+    }).values()
+    expect(config.notInDefault).toBeNull()
+  })
+})
+
 describe('User config variable', () => {
   const defaultConfig = resolve(__dirname, './sandbox/default.json')
 

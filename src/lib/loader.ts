@@ -6,7 +6,6 @@ import { createConfigStorage } from './storage'
 export interface ConfigLoaderOptions {
   defaultConfigPath?: string
   userConfigPath?: string
-  envMode?: 'all' | 'default' | 'merged' | 'none'
 }
 
 const resolveUserConfigPath = () => {
@@ -25,7 +24,6 @@ const resolveUserConfigPath = () => {
 const defaultOpts: ConfigLoaderOptions = {
   defaultConfigPath: '.env',
   userConfigPath: resolveUserConfigPath(),
-  envMode: 'default',
 }
 
 export interface LoadedValue<

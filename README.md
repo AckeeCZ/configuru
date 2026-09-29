@@ -72,6 +72,14 @@ import config from './config' // e.g. { server: { port: 3000 } }
 console.log(config.server.port) // 3000
 ```
 
+## Migration to 3.0
+
+The `envMode` loader option was removed. Environment variables now always override only the keys declared in the default config, which is what the former `default` mode did. Passing `envMode` is a type error in TypeScript and is ignored at runtime.
+
+- `default` users: nothing to do.
+- `all` and `merged` users: add every key you override from the environment to your default config. Keys missing there are no longer read from `process.env`.
+- `none` users: env override can no longer be switched off. Unset the variables that collide with your config keys, or rename the keys.
+
 ## Docs
 
 - [Config storage precedence](./wiki/storage-precedence.md)

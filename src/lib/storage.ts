@@ -63,26 +63,14 @@ const loadSecrets = (secretsOrPath?: string) => {
 }
 
 export const createConfigStorage = (
-  opts: Pick<
-    ConfigLoaderOptions,
-    'defaultConfigPath' | 'userConfigPath' | 'envMode'
-  >
+  opts: Pick<ConfigLoaderOptions, 'defaultConfigPath' | 'userConfigPath'>
 ): Record<any, any> => {
   const defaultConfig = loadSecrets(opts.defaultConfigPath)
   const userConfig = loadSecrets(opts.userConfigPath)
-  let envConfig: any = {}
-  if (opts.envMode === 'default' || opts.envMode === 'merged') {
-    const configKeys = [
-      ...keys(defaultConfig),
-      ...(opts.envMode === 'merged' ? keys(userConfig) : []),
-    ]
-    envConfig = fromPairs(
-      configKeys
-        .map(k => [k, process.env[k]] as [string, any])
-        .filter(x => x[1] !== undefined)
-    )
-  } else if (opts.envMode === 'all') {
-    envConfig = process.env
-  }
+  const envConfig = fromPairs(
+    keys(defaultConfig)
+      .map(k => [k, process.env[k]] as [string, any])
+      .filter(x => x[1] !== undefined)
+  )
   return { ...defaultConfig, ...userConfig, ...envConfig }
 }
