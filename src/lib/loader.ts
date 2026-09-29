@@ -8,22 +8,9 @@ export interface ConfigLoaderOptions {
   userConfigPath?: string
 }
 
-const resolveUserConfigPath = () => {
-  if (process.env.CONFIGURU_CONFIG) {
-    return process.env.CONFIGURU_CONFIG
-  }
-  if (process.env.CFG_JSON_PATH) {
-    console.warn(
-      'Configuru: CFG_JSON_PATH is deprecated, use CONFIGURU_CONFIG instead. It will be removed in the next major version.'
-    )
-    return process.env.CFG_JSON_PATH
-  }
-  return undefined
-}
-
 const defaultOpts: ConfigLoaderOptions = {
   defaultConfigPath: '.env',
-  userConfigPath: resolveUserConfigPath(),
+  userConfigPath: process.env.CONFIGURU_CONFIG,
 }
 
 export interface LoadedValue<

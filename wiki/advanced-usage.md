@@ -105,7 +105,7 @@ const loader = createLoader({
 ```
 
 1. `defaultConfigPath`: Where to look for your default config JSON file (provide null to skip)
-2. `userConfigPath`: Where to look for your user config JSON file. Defaults to `process.env.CONFIGURU_CONFIG`, falling back to `process.env.CFG_JSON_PATH` (deprecated). Provide null to skip
+2. `userConfigPath`: Where to look for your user config JSON file. Defaults to `process.env.CONFIGURU_CONFIG`. Provide null to skip
 
 🦉 When configuring configuru, you can always use paths with or without extension, it will try to find any of the supported formats via replacing/adding valid extensions.
 

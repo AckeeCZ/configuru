@@ -187,7 +187,6 @@ describe('User config variable', () => {
 
   afterEach(() => {
     delete process.env.CONFIGURU_CONFIG
-    delete process.env.CFG_JSON_PATH
   })
 
   test('CONFIGURU_CONFIG inline JSON', async () => {
@@ -197,15 +196,5 @@ describe('User config variable', () => {
     const loader = createLoader({ defaultConfigPath: defaultConfig })
     const config = loader({ foo: schema.string('foo') }).values()
     expect(config.foo).toBe('from_configuru')
-  })
-
-  test('CONFIGURU_CONFIG over CFG_JSON_PATH', async () => {
-    process.env.CONFIGURU_CONFIG = JSON.stringify({ foo: 'new' })
-    process.env.CFG_JSON_PATH = JSON.stringify({ foo: 'old' })
-    jest.resetModules() // loader reads env at import time, so we must re-import
-    const { createLoader } = await import('../lib/loader')
-    const loader = createLoader({ defaultConfigPath: defaultConfig })
-    const config = loader({ foo: schema.string('foo') }).values()
-    expect(config.foo).toBe('new')
   })
 })
