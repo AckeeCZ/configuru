@@ -101,19 +101,39 @@ import { createLoader } from 'configuru'
 const loader = createLoader({
   defaultConfigPath: 'default-config', // defaults to ".env"
   userConfigPath: process.env.USER_CONFIG, // defaults to process.env.CONFIGURU_CONFIG
-  envMode: 'all', // defaults to "default"
 })
 ```
 
 1. `defaultConfigPath`: Where to look for your default config JSON file (provide null to skip)
-2. `userConfigPath`: Where to look for your user config JSON file. Defaults to `process.env.CONFIGURU_CONFIG`, falling back to `process.env.CFG_JSON_PATH` (deprecated). Provide null to skip
-3. `envMode`: How to handle process.env variables
-   1. `all` - Load (override) all vars available in process.env to the store
-   2. `default` - Load (override) only vars with keys from default config
-   3. `merged` - Load (override) only vars with keys from either (user or default) config
-   4. `none` - Don't use env variables
+2. `userConfigPath`: Where to look for your user config JSON file. Defaults to `process.env.CONFIGURU_CONFIG`. Provide null to skip
 
 🦉 When configuring configuru, you can always use paths with or without extension, it will try to find any of the supported formats via replacing/adding valid extensions.
+
+### Environment variables
+
+Environment variables override the default and user config, but only for keys declared in the default config. Configuru reads `process.env[key]` for every key of the default config and applies the ones that are set. Keys that exist only in the user config, or only in your loader schema, are never read from the environment. This rule is fixed and cannot be changed by an option.
+
+Treat the default config file (`.env.jsonc`) as the single source of truth for what your app can configure: every key you want to override from the environment must be declared there, with a default value or a placeholder.
+
+The following does **not** work, because `API_KEY` is missing from the default config, so the env variable is never read and the value resolves to `null`:
+
+```jsonc
+// .env.jsonc
+{
+  "SERVER_PORT": 3000
+}
+```
+
+```typescript
+const config = loader({
+  apiKey: schema.string.nullable('API_KEY'),
+}).values()
+
+// API_KEY=secret node app.js
+config.apiKey // null
+```
+
+Add `"API_KEY": ""` (or any placeholder) to `.env.jsonc` and the env variable is picked up.
 
 ### Mismatch types
 

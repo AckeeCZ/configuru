@@ -43,8 +43,6 @@ npm install configuru
 
    Tip: Use inline secrets like `CONFIGURU_CONFIG='{"mysecret":"Sssshhh..."}'` or load from GCP Secret Manager: `CONFIGURU_CONFIG=$(gcloud secrets versions access latest --project=myproject --secret=mysecret)`
 
-   **Note:** The legacy `CFG_JSON_PATH` variable is still supported but deprecated and will be removed in the next major version.
-
 4. Create a configuration module (e.g. `config.ts`)
 
 ```typescript
